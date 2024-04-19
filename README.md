@@ -34,6 +34,13 @@ The plan is to containerize both into a single Docker container for easy deploym
 | ☆ `uri`       | `TEXT` |
 | `name`        | `TEXT` |
 | `album_uri`   | `TEXT` |
+
+### `album`
+
+| Name          | Type   |
+|---------------|--------|
+| ☆ `uri`       | `TEXT` |
+| `name`        | `TEXT` |
 | `album_image` | `BLOB` |
 
 ### `artist`

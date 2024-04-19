@@ -14,12 +14,18 @@ CREATE TABLE IF NOT EXISTS playlist
     owner_uri   TEXT REFERENCES user.user_image
 );
 
+CREATE TABLE IF NOT EXISTS album
+(
+    uri TEXT PRIMARY KEY,
+    name TEXT
+    album_image BLOB
+);
+
 CREATE TABLE IF NOT EXISTS track
 (
     uri         TEXT PRIMARY KEY,
     name        TEXT,
-    album_uri   TEXT,
-    album_image BLOB,
+    album_uri   TEXT REFERENCES album.uri,
 );
 
 CREATE TABLE IF NOT EXISTS artist
