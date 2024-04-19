@@ -24,6 +24,10 @@ Figma mockup:
 
 ![UI Mockup](data/ui_mockup.png)
 
+## Database
+
+The database will be a single, local SQLite database with several tables. See [data/DATABASE.md](data/DATABASE.md).
+
 ## Resources
 
 - [Tom Scott: 1,204,986 Votes Decided: What Is The Best Thing?](https://www.youtube.com/watch?v=ALy6e7GbDRQ)
@@ -36,7 +40,3 @@ Figma mockup:
 ## License
 
 All rights reserved to the maximum possible extent.
-
-## Database
-
-The database will be a single, local SQLite database with several tables. See [data/DATABASE.md](data/DATABASE.md).
