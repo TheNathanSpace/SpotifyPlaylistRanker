@@ -29,11 +29,11 @@ The plan is to containerize both into a single Docker container for easy deploym
 
 ### `track`
 
-| Name          | Type   |
-|---------------|--------|
-| ☆ `uri`       | `TEXT` |
-| `name`        | `TEXT` |
-| `album_uri`   | `TEXT` |
+| Name        | Type   |
+|-------------|--------|
+| ☆ `uri`     | `TEXT` |
+| `name`      | `TEXT` |
+| `album_uri` | `TEXT` |
 
 ### `album`
 
@@ -72,6 +72,17 @@ The plan is to containerize both into a single Docker container for easy deploym
 |----------------|--------|
 | ☆ `track_uri`  | `TEXT` |
 | ☆ `artist_uri` | `TEXT` |
+
+## User Interface
+
+The UI will be built in React with MUI Joy UI components.
+
+Figma mockup:
+
+- [Design](https://www.figma.com/file/YcANdKT3sy9axCBssIUqvo/Spotify-Playlist-Ranker?type=design&node-id=0-1&mode=design)
+- [Live Preview](https://www.figma.com/proto/YcANdKT3sy9axCBssIUqvo/Spotify-Playlist-Ranker?type=design&node-id=2-2&scaling=min-zoom&page-id=0%3A1&starting-point-node-id=2%3A2)
+
+![UI Mockup](data/ui_mockup.png)
 
 ## Resources
 
