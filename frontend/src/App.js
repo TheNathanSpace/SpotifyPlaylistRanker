@@ -1,7 +1,6 @@
 import StartPage from "./StartPage";
 import {Route, Switch} from "wouter";
 import PlaylistPage from "./PlaylistPage";
-import '@fontsource/inter';
 
 function App() {
     return (<>
