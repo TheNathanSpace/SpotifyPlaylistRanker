@@ -16,6 +16,11 @@ code {
     margin: 1em;
 }
 
+.input-margin {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 .inline-child {
     float: left;
     margin-right: 1em;
@@ -29,4 +34,8 @@ code {
 .hor-centered {
     display: flex;
     justify-content: center;
+}
+
+.inter-font {
+    font-family: Inter, sans-serif;
 }
