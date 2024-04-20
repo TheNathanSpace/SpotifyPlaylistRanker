@@ -1,16 +1,14 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {useLocation} from "wouter";
-import ValidationError from "./ValidationError";
-import TextInput from "./TextInput";
+import {Alert, Button, Input} from "@mui/joy";
 
 const StartPage = () => {
     const [, setLocation] = useLocation();
     const [errors, setErrors] = useState()
 
-    const playlistValueRef = useRef("");
-    const usernameValueRef = useRef("");
-    const passwordValueRef = useRef("");
-
+    const [playlistValue, setPlaylistValue] = useState("")
+    const [usernameValue, setUsernameValue] = useState("")
+    const [passwordValue, setPasswordValue] = useState("")
 
     const handleStart = () => {
         /*
@@ -20,24 +18,21 @@ const StartPage = () => {
             3. Playlist page take input, gets data from back-end, displays it
          */
         const newErrors = [];
-        if (!playlistValueRef.current) {
-            newErrors.push(<ValidationError field={"Playlist URL"}
-                                            message={"Please enter valid Spotify playlist URL"}
-                                            key={"Playlist URL"}/>);
+        if (!playlistValue) {
+            newErrors.push(<Alert className={"input-margin"} color="danger" variant="soft" key={"playlist"}>Please enter
+                valid
+                Spotify playlist URL</Alert>)
         }
-        if (!usernameValueRef.current) {
-            newErrors.push(<ValidationError field={"Username"}
-                                            message={"Please enter username"}
-                                            key={"Username"}/>);
-
+        if (!usernameValue) {
+            newErrors.push(<Alert className={"input-margin"} color="danger" variant="soft" key={"username"}>Please enter
+                valid
+                Username</Alert>)
         }
-        if (!passwordValueRef.current) {
-            newErrors.push(<ValidationError field={"Password"}
-                                            message={"Incorrect password"}
-                                            key={"Password"}/>);
-
+        if (!passwordValue) {
+            newErrors.push(<Alert className={"input-margin"} color="danger" variant="soft" key={"password"}>Invalid
+                Password</Alert>)
         }
-        if (playlistValueRef.current && usernameValueRef.current && passwordValueRef.current) {
+        if (playlistValue && usernameValue && passwordValue) {
             setLocation("/playlist");
         } else {
             setErrors(newErrors);
@@ -45,19 +40,50 @@ const StartPage = () => {
     };
 
     return (<div>
-            <h1>Spotify Playlist Ranker</h1>
-            <TextInput prompt={"Enter playlist URL:"} valueRef={playlistValueRef}/>
-            <TextInput prompt={"Username:"} valueRef={usernameValueRef}/>
-            <TextInput prompt={"Password:"} valueRef={passwordValueRef}/>
-
-            <div className={"hor-centered"}>
-                <div className={"inline-child"}>
-                    <button onClick={handleStart}>Start!</button>
-                </div>
-            </div>
+        <h1 className={"inter-font"}>Spotify Playlist Ranker</h1>
+        <div id={"inputs"}>
+            <Input
+                className={"input-margin"}
+                color="neutral"
+                disabled={false}
+                placeholder="Playlist URL"
+                size="lg"
+                variant="outlined"
+                onChange={(event) => setPlaylistValue(event.target.value)}
+            />
+            <Input
+                className={"input-margin"}
+                color="neutral"
+                disabled={false}
+                placeholder="Username"
+                size="lg"
+                variant="outlined"
+                onChange={(event) => setUsernameValue(event.target.value)}
+            />
+            <Input
+                className={"input-margin"}
+                color="neutral"
+                disabled={false}
+                placeholder="Password"
+                size="lg"
+                variant="outlined"
+                onChange={(event) => setPasswordValue(event.target.value)}
+            />
+        </div>
+        <div className={"hor-centered"}>
+            <Button
+                className={"inline-child"}
+                color="primary"
+                onClick={handleStart}
+                variant="solid"
+            >
+                Start!
+            </Button>
+        </div>
+        <div id={"errors"}>
             {errors}
         </div>
-    );
+    </div>);
 }
 
 export default StartPage;
