@@ -28,6 +28,13 @@ Figma mockup:
 
 The database will be a single, local SQLite database with several tables. See [data/DATABASE.md](data/DATABASE.md).
 
+## Notes
+
+- The point of the whole "passcode" thing is to allow users to have their own unique rankings, without having all the
+  overhead of a full account system. But I think at that point it would be better to just have users enter an
+  email/password pair so that there's a way to associate rankings with a certain user on the back-end, in case of
+  something like password resets, etc.
+
 ## Resources
 
 - [Tom Scott: 1,204,986 Votes Decided: What Is The Best Thing?](https://www.youtube.com/watch?v=ALy6e7GbDRQ)
