@@ -1,12 +1,14 @@
 import StartPage from "./StartPage";
 import {Route, Switch} from "wouter";
 import PlaylistPage from "./PlaylistPage";
+import Header from "./Header";
 
 function App() {
-    return (<>
-        <div className="content">
-            <div className={"hor-centered vert-centered"}>
-                <div className={"inline-child"}>
+    return (
+        <>
+            <Header/>
+            <div className="content">
+                <div className={"hor-centered vert-centered"}>
                     <Switch>
                         <Route path="/">
                             <StartPage/>
@@ -17,8 +19,8 @@ function App() {
                     </Switch>
                 </div>
             </div>
-        </div>
-    </>);
+        </>
+    );
 }
 
 export default App;

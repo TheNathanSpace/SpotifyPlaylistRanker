@@ -21,9 +21,11 @@ code {
     margin-bottom: 1em;
 }
 
+.inline-parent {
+    display: flex;
+}
+
 .inline-child {
-    float: left;
-    margin-right: 1em;
 }
 
 .vert-centered {
@@ -43,3 +45,21 @@ code {
 .start-button {
     width: 50%;
 }
+
+.header-clickable {
+    padding: 0.6em;
+    padding-left: 1em;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.header-logo {
+    height: 3.5em;
+}
+
+.header-text {
+    font-family: Inter, sans-serif;
+    font-size: 1.5em;
+    padding-left: 0.75em;
+}
+
