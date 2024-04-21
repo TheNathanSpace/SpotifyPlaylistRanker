@@ -12,7 +12,7 @@ const Header = () => {
     }
 
     return (
-        <div className={""} style={{backgroundColor: theme.palette.background.level2}}>
+        <div style={{backgroundColor: theme.palette.background.level1}}>
             <div className={"header-clickable vert-centered"} onClick={goHome}>
                 <img src={logo192} alt={"Website logo"} className={"header-logo"}/>
                 <div className={"header-text"}>Spotify Playlist Ranker</div>
