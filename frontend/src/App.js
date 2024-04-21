@@ -10,10 +10,13 @@ function App() {
             <div className="content">
                 <div className={"hor-centered vert-centered"}>
                     <Switch>
+                        {/*<Route path="/">*/}
+                        {/*    <StartPage/>*/}
+                        {/*</Route>*/}
+                        {/*<Route path="/playlist">*/}
+                        {/*    <PlaylistPage/>*/}
+                        {/*</Route>*/}
                         <Route path="/">
-                            <StartPage/>
-                        </Route>
-                        <Route path="/playlist">
                             <PlaylistPage/>
                         </Route>
                     </Switch>

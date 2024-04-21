@@ -16,6 +16,10 @@ code {
     margin: 1em;
 }
 
+.content * {
+    font-family: Inter, sans-serif;
+}
+
 .input-margin {
     margin-top: 1em;
     margin-bottom: 1em;
@@ -36,10 +40,6 @@ code {
 .hor-centered {
     display: flex;
     justify-content: center;
-}
-
-.inter-font {
-    font-family: Inter, sans-serif;
 }
 
 .start-button {
@@ -63,3 +63,35 @@ code {
     padding-left: 0.75em;
 }
 
+.playlist-info-column {
+    margin-left: 2em;
+}
+
+.playlist-image {
+    height: 15em;
+}
+
+.playlist-description {
+    margin-bottom: 2em;
+}
+
+.profile-image {
+    height: 2.2em;
+}
+
+.start-ranking-button {
+    height: 4em;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.underlined {
+    text-decoration-line: underline;
+}
+
+.divider {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+}
