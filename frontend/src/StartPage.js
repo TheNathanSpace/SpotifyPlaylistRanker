@@ -26,10 +26,31 @@ const StartPage = () => {
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
          */
         const pattern = /.*spotify\.com\/playlist\/(.*)/
-        return pattern.test(playlistValue.current);
+        const matches = pattern.test(playlistValue.current);
+
+        if (!matches) {
+            return false;
+        }
+
+        /*
+          TODO: Check if playlist exists via Spotify API. Use that to further validate.
+         */
+
+        return true
     }
     const validateLogin = () => {
-        return (usernameValue.current && passwordValue.current);
+        const fieldsFilled = usernameValue.current && passwordValue.current;
+
+        if (!fieldsFilled) {
+            return false;
+
+        }
+
+        /*
+          TODO: Verify username exists and username/password matches.
+         */
+
+        return true;
     }
 
     const validateInput = () => {
@@ -39,13 +60,20 @@ const StartPage = () => {
             2. Route to /playlist, injecting with input
             3. Playlist page take input, gets data from back-end, displays it
          */
+
+        // Show errors only after first attempt
         setShowErrors(true);
+
+        // Validate input
         const newPlaylistIsValid = validatePlaylist();
         const newLoginIsValid = validateLogin();
 
+        // If input is valid, go to playlist page
         if (newPlaylistIsValid && newLoginIsValid) {
             setLocation("/playlist");
         }
+
+        // Update state, triggering re-render
         setPlaylistIsValid(newPlaylistIsValid);
         setLoginIsValid(newLoginIsValid);
     };
