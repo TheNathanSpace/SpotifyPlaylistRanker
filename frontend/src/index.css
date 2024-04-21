@@ -39,3 +39,7 @@ code {
 .inter-font {
     font-family: Inter, sans-serif;
 }
+
+.start-button {
+    width: 50%;
+}
