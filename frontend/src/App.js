@@ -3,6 +3,7 @@ import {Route, Switch} from "wouter";
 import PlaylistInfo from "./PlaylistPage";
 import Header from "./Header";
 import {useState} from "react";
+import CreateAccountPage from "./CreateAccountPage";
 
 function App() {
     const [token, setToken] = useState();
@@ -19,7 +20,14 @@ function App() {
                 <div className={"hor-centered vert-centered"}>
                     {
                         !token ?
-                            <LoginPage setToken={setToken}/>
+                            <Switch>
+                                <Route path="/">
+                                    <LoginPage setToken={setToken}/>
+                                </Route>
+                                <Route path="/create-account">
+                                    <CreateAccountPage/>
+                                </Route>
+                            </Switch>
                             : <></>
                     }
                     {

@@ -11,54 +11,60 @@ CREATE TABLE IF NOT EXISTS playlist
     name        TEXT,
     image       BLOB,
     description TEXT,
-    owner_uri   TEXT REFERENCES user.user_image
+    owner_uri   TEXT,
+    FOREIGN KEY (owner_uri) REFERENCES user (uri)
 );
 
 CREATE TABLE IF NOT EXISTS album
 (
-    uri TEXT PRIMARY KEY,
-    name TEXT
+    uri  TEXT PRIMARY KEY,
+    name TEXT,
     album_image BLOB
 );
 
 CREATE TABLE IF NOT EXISTS track
 (
-    uri         TEXT PRIMARY KEY,
-    name        TEXT,
-    album_uri   TEXT REFERENCES album.uri,
+    uri       TEXT PRIMARY KEY,
+    name      TEXT,
+    album_uri TEXT,
+    FOREIGN KEY (album_uri) REFERENCES album (uri)
 );
 
 CREATE TABLE IF NOT EXISTS artist
 (
     uri          TEXT PRIMARY KEY,
     name         TEXT,
-    artist_image BLOB,
+    artist_image BLOB
 );
 
 CREATE TABLE IF NOT EXISTS user
 (
     uri        TEXT PRIMARY KEY,
     name       TEXT,
-    user_image BLOB,
+    user_image BLOB
 );
 
 CREATE TABLE IF NOT EXISTS playlist_track_xref
 (
-    playlist_uri TEXT REFERENCES playlist.uri,
-    track_uri    TEXT REFERENCES track.uri,
-    PRIMARY KEY (playlist_uri, track_uri)
+    playlist_uri TEXT ,
+    track_uri    TEXT ,
+    PRIMARY KEY (playlist_uri, track_uri),
+    FOREIGN KEY (playlist_uri) REFERENCES playlist (uri),
+    FOREIGN KEY (track_uri) REFERENCES track (uri)
 );
 
 CREATE TABLE IF NOT EXISTS track_artist_xref
 (
-    track_uri  TEXT REFERENCES track.uri,
-    artist_uri TEXT REFERENCES artist.uri,
-    PRIMARY KEY (track_uri, artist_uri)
+    track_uri  TEXT ,
+    artist_uri TEXT ,
+    PRIMARY KEY (track_uri, artist_uri),
+    FOREIGN KEY (track_uri) REFERENCES track (uri),
+    FOREIGN KEY (artist_uri) REFERENCES artist (uri)
 );
 
 CREATE TABLE IF NOT EXISTS logins
 (
     username TEXT PRIMARY KEY,
-    hash BLOB,
-    salt BLOB
-)
+    hash     BLOB,
+    salt     BLOB
+);

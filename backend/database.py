@@ -5,44 +5,55 @@ from sqlite3 import Connection, Cursor
 import util
 
 
+class WithCursor:
+    def __init__(self, database_path):
+        self.database = database_path
+        self.connection = None
+        self.cursor = None
+
+    def __enter__(self):
+        self.connection = sqlite3.connect(self.database)
+        self.cursor = self.connection.cursor()
+        return self.cursor
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.commit()
+            self.connection.close()
+
+
 class Database:
-    def __init__(self):
-        self.connection: Connection = None
+    def get_database_path(self) -> str:
+        return (util.get_data_dir() / "database.db").as_posix()
 
     def read_init_script(self) -> str:
         script: Path = util.get_data_dir() / "init_database.sql"
         return script.read_text()
 
-    def get_db_connection(self) -> Connection:
-        if not self.connection:
-            self.connection = sqlite3.connect(util.get_data_dir() / "database.db")
-        return self.connection
-
-    def close_db_connection(self):
-        self.get_db_connection().commit()
-        self.get_db_connection().close()
-        self.connection = None
-
-    def get_db_cursor(self) -> Cursor:
-        return self.get_db_connection().cursor()
+    def get_db_cursor(self):
+        return WithCursor(self.get_database_path())
 
     def init_database(self):
         script = self.read_init_script()
-        cursor: Cursor = self.get_db_cursor()
-        cursor.executescript(script)
-        cursor.close()
+        with self.get_db_cursor() as cursor:
+            cursor.executescript(script)
 
     def user_exists(self, username: str):
-        result = self.get_db_cursor().execute("SELECT username FROM logins WHERE username = ?", (username,)).fetchall()
-        if len(result) > 0:
-            return True
-        else:
-            return False
+        with self.get_db_cursor() as cursor:
+            result = cursor.execute("SELECT username FROM logins WHERE username = ?;", (username,)).fetchall()
+            if len(result) > 0:
+                return True
+            else:
+                return False
 
     def create_user(self, username: str, salt: bytes, hash: bytes):
-        self.get_db_connection().execute("INSERT INTO logins VALUES (?, ?, ?)", (username, salt, hash,))
+        with self.get_db_cursor() as cursor:
+            cursor.execute("INSERT INTO logins VALUES (?, ?, ?);", (username, salt, hash,))
 
     def get_user_password(self, username: str):
-        result = self.get_db_cursor().execute("SELECT salt, hash FROM logins WHERE username = ?",
-                                              (username,)).fetchone()
-        return result
+        with self.get_db_cursor() as cursor:
+            result = cursor.execute("SELECT salt, hash FROM logins WHERE username = ?;",
+                                    (username,)).fetchone()
+            return result

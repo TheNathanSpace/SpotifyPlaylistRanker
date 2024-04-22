@@ -32,16 +32,28 @@ class Login:
             hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
         )
 
-    def login(self, username: str, password: str):
-        if not self.database.user_exists(username):
-            self.create_user(username, password)
-        return self.login_user(username, password)
-
     def create_user(self, username: str, password: str):
         user_salt, user_hash = self.hash_new_password(password)
+        print(f"New salt / hash: {user_salt} / {user_hash}")
         self.database.create_user(username, user_salt, user_hash)
+        return True
 
     def login_user(self, username: str, password: str):
+        if not self.user_exists(username):
+            return False, ""
+
         user_salt, user_hash = self.database.get_user_password(username)
+        print(f"Stored salt / hash: {user_salt} / {user_hash}")
+
         is_correct = self.is_correct_password(user_salt, user_hash, password)
-        return is_correct, "placeholder_token"
+        print(f"is correct: {is_correct}")
+        if is_correct:
+            return True, "placeholder_token"
+        else:
+            return False, ""
+
+    def user_exists(self, username: str):
+        return self.database.user_exists(username)
+
+    def validate_password(self, password: str):
+        return len(password) >= 8

@@ -63,19 +63,14 @@ const LoginPage = (props) => {
         }
         const target = LOGIN + "?" + new URLSearchParams(params).toString();
         const response = await (await fetch(target)).json();
-        console.log("Login response:", response)
-        props.setToken(response.token)
-
+        console.log("login response:", response)
+        if (response.valid) {
+            props.setToken(response.token)
+        }
         return response.valid
     }
 
     const validateInput = async () => {
-        /*
-            TODO: Placeholder code to skip login
-         */
-        // const placeholderPlaylistURI = "0Z2vAuYCxFvpkpPs12TDpa";
-        // setLocation("/playlist/" + placeholderPlaylistURI);
-
         /*
          TODO:
             1. Handle input validation
@@ -83,12 +78,9 @@ const LoginPage = (props) => {
             3. Playlist page take input, gets data from back-end, displays it
          */
 
-        // Show errors only after first attempt
-        setShowErrors(true);
-
         // Validate input
         const newPlaylistIsValid = await validatePlaylist();
-        const newLoginIsValid = validateLogin();
+        const newLoginIsValid = await validateLogin();
 
         // If input is valid, go to playlist page
         if (newPlaylistIsValid && newLoginIsValid) {
@@ -98,7 +90,14 @@ const LoginPage = (props) => {
         // Update state, triggering re-render
         setPlaylistIsValid(newPlaylistIsValid);
         setLoginIsValid(newLoginIsValid);
+
+        // Show errors only after first attempt
+        setShowErrors(true);
     };
+
+    const createAccount = async () => {
+        setLocation("/create-account")
+    }
 
     return (
         <div>
@@ -147,19 +146,30 @@ const LoginPage = (props) => {
                 </FormControl>
                 <div className={"hor-centered"}>
                     <Button
-                        className={"start-button hor-centered"}
+                        className={"start-button"}
                         color="primary"
                         onClick={validateInput}
                         variant="solid"
                     >
-                        Start!
+                        Login
                     </Button>
                 </div>
+                <div className={"hor-centered"}>
+                    <Button
+                        className={"start-button"}
+                        color="primary"
+                        onClick={createAccount}
+                        variant="outlined"
+                    >
+                        Create Account
+                    </Button>
+                </div>
+
             </Stack>
             <div id={"errors"}>
                 {
                     (loginIsValid || !showErrors) ? null : (
-                        <Alert className={"input-margin"} color="danger" variant="soft" key={"password"}>
+                        <Alert className={"input-margin"} color="danger" variant="soft">
                             Invalid login
                         </Alert>
                     )
