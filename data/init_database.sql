@@ -65,6 +65,6 @@ CREATE TABLE IF NOT EXISTS track_artist_xref
 CREATE TABLE IF NOT EXISTS logins
 (
     username TEXT PRIMARY KEY,
-    hash     BLOB,
-    salt     BLOB
+    salt     BLOB,
+    hash     BLOB
 );

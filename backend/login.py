@@ -34,7 +34,6 @@ class Login:
 
     def create_user(self, username: str, password: str):
         user_salt, user_hash = self.hash_new_password(password)
-        print(f"New salt / hash: {user_salt} / {user_hash}")
         self.database.create_user(username, user_salt, user_hash)
         return True
 
@@ -43,10 +42,8 @@ class Login:
             return False, ""
 
         user_salt, user_hash = self.database.get_user_password(username)
-        print(f"Stored salt / hash: {user_salt} / {user_hash}")
 
         is_correct = self.is_correct_password(user_salt, user_hash, password)
-        print(f"is correct: {is_correct}")
         if is_correct:
             return True, "placeholder_token"
         else:

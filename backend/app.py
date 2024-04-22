@@ -73,9 +73,7 @@ def create_account():
 def login():
     username = request.args.get('username')
     password = request.args.get('password')
-    print(f"Username / password: {username} / {password}")
 
-    # TODO: Validate login
     is_correct, token = LOGIN.login_user(username, password)
 
     return {

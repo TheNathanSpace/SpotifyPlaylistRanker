@@ -62,6 +62,15 @@ const CreateAccountPage = () => {
             const target = CREATE_ACCOUNT + "?" + new URLSearchParams(params).toString();
             const response = await (await fetch(target)).json();
             setAccountCreated(true);
+            /*
+                TODO: A successfully created account should
+                      redirect the user to the login page
+                      with a message that their account was
+                      created and they can log in. There's
+                      got to be a way to pass that information
+                      up out of this component and down into
+                      the login component.
+             */
         }
         // Update state, triggering re-render
         setUsernameIsValid(validateResponse.username_valid);
