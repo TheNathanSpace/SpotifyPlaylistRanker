@@ -1,6 +1,6 @@
 import StartPage from "./StartPage";
 import {Route, Switch} from "wouter";
-import PlaylistPage from "./PlaylistPage";
+import PlaylistInfo from "./PlaylistPage";
 import Header from "./Header";
 
 function App() {
@@ -10,14 +10,20 @@ function App() {
             <div className="content">
                 <div className={"hor-centered vert-centered"}>
                     <Switch>
-                        {/*<Route path="/">*/}
-                        {/*    <StartPage/>*/}
-                        {/*</Route>*/}
-                        {/*<Route path="/playlist">*/}
-                        {/*    <PlaylistPage/>*/}
-                        {/*</Route>*/}
                         <Route path="/">
-                            <PlaylistPage/>
+                            <StartPage/>
+                        </Route>
+                        <Route path="/playlist/:playlistURI">
+                            <div>
+                                <PlaylistInfo/>
+                                Tracks as ranked by current user
+                            </div>
+                        </Route>
+                        <Route path="/playlist/:playlistURI/rank">
+                            <div>
+                                <PlaylistInfo/>
+                                Interactive track ranking menu
+                            </div>
                         </Route>
                     </Switch>
                 </div>
