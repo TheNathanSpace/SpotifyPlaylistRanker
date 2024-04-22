@@ -4,8 +4,11 @@ import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} fro
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
 import {SPOTIFY_PLAYLIST_PATTERN} from "./constants"
+import {CHECK_PLAYLIST, LOGIN} from "./addresses";
+import PropTypes from "prop-types";
 
-const StartPage = () => {
+
+const LoginPage = (props) => {
     const [, setLocation] = useLocation();
     const theme = useTheme();
 
@@ -21,24 +24,30 @@ const StartPage = () => {
     const usernameValue = useRef("");
     const passwordValue = useRef("");
 
-    const validatePlaylist = () => {
+    const playlistURI = useRef();
+
+    const validatePlaylist = async () => {
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
          */
-        const matches = SPOTIFY_PLAYLIST_PATTERN.test(playlistValue.current);
-
-        if (!matches) {
+        const matched = SPOTIFY_PLAYLIST_PATTERN.exec(playlistValue.current);
+        if (!matched) {
             return false;
         }
+        const matchedURI = matched[1];
 
-        /*
-          TODO: Check if playlist exists via Spotify API. Use that to further validate.
-         */
+        const params = {
+            playlist_uri: matchedURI
+        }
+        const target = CHECK_PLAYLIST + "?" + new URLSearchParams(params).toString();
+        const response = await (await fetch(target)).json();
+        playlistURI.current = response.playlist_uri
 
-        return true
+        return response.valid
     }
-    const validateLogin = () => {
+
+    const validateLogin = async () => {
         const fieldsFilled = usernameValue.current && passwordValue.current;
 
         if (!fieldsFilled) {
@@ -48,16 +57,24 @@ const StartPage = () => {
         /*
           TODO: Verify username exists and username/password matches.
          */
+        const params = {
+            username: usernameValue.current,
+            password: passwordValue.current
+        }
+        const target = LOGIN + "?" + new URLSearchParams(params).toString();
+        const response = await (await fetch(target)).json();
+        console.log("Login response:", response)
+        props.setToken(response.token)
 
-        return true;
+        return response.valid
     }
 
-    const validateInput = () => {
+    const validateInput = async () => {
         /*
             TODO: Placeholder code to skip login
          */
-        const placeholderPlaylistURI = "0Z2vAuYCxFvpkpPs12TDpa";
-        setLocation("/playlist/" + placeholderPlaylistURI);
+        // const placeholderPlaylistURI = "0Z2vAuYCxFvpkpPs12TDpa";
+        // setLocation("/playlist/" + placeholderPlaylistURI);
 
         /*
          TODO:
@@ -70,12 +87,12 @@ const StartPage = () => {
         setShowErrors(true);
 
         // Validate input
-        const newPlaylistIsValid = validatePlaylist();
+        const newPlaylistIsValid = await validatePlaylist();
         const newLoginIsValid = validateLogin();
 
         // If input is valid, go to playlist page
         if (newPlaylistIsValid && newLoginIsValid) {
-            setLocation("/playlist");
+            setLocation("/playlist/" + playlistURI.current);
         }
 
         // Update state, triggering re-render
@@ -152,4 +169,8 @@ const StartPage = () => {
     );
 }
 
-export default StartPage;
+LoginPage.props = {
+    setToken: PropTypes.any
+}
+
+export default LoginPage;

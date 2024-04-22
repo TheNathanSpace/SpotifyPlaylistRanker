@@ -101,7 +101,7 @@ const PlaylistPage = () => {
                             toggleRanking()
                         }}
                     >
-                        { isRankPage() ? <pre>Stop ranking </pre> : "Start ranking!"}
+                        { isRankPage() ? "Stop ranking" : "Start ranking!"}
                     </Button>
                 </div>
             </div>

@@ -1,31 +1,48 @@
-import StartPage from "./StartPage";
+import LoginPage from "./LoginPage";
 import {Route, Switch} from "wouter";
 import PlaylistInfo from "./PlaylistPage";
 import Header from "./Header";
+import {useState} from "react";
 
 function App() {
+    const [token, setToken] = useState();
+
+    /*
+        If a token does not exist, then force the login page.
+        Otherwise, perform normal routing.
+     */
+
     return (
         <>
             <Header/>
             <div className="content">
                 <div className={"hor-centered vert-centered"}>
-                    <Switch>
-                        <Route path="/">
-                            <StartPage/>
-                        </Route>
-                        <Route path="/playlist/:playlistURI">
-                            <div>
-                                <PlaylistInfo/>
-                                Tracks as ranked by current user
-                            </div>
-                        </Route>
-                        <Route path="/playlist/:playlistURI/rank">
-                            <div>
-                                <PlaylistInfo/>
-                                Interactive track ranking menu
-                            </div>
-                        </Route>
-                    </Switch>
+                    {
+                        !token ?
+                            <LoginPage setToken={setToken}/>
+                            : <></>
+                    }
+                    {
+                        token ?
+                            <Switch>
+                                <Route path="/">
+                                    <LoginPage setToken={setToken}/>
+                                </Route>
+                                <Route path="/playlist/:playlistURI">
+                                    <div>
+                                        <PlaylistInfo/>
+                                        Tracks as ranked by current user
+                                    </div>
+                                </Route>
+                                <Route path="/playlist/:playlistURI/rank">
+                                    <div>
+                                        <PlaylistInfo/>
+                                        Interactive track ranking menu
+                                    </div>
+                                </Route>
+                            </Switch>
+                            : <></>
+                    }
                 </div>
             </div>
         </>

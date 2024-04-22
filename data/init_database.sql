@@ -55,3 +55,10 @@ CREATE TABLE IF NOT EXISTS track_artist_xref
     artist_uri TEXT REFERENCES artist.uri,
     PRIMARY KEY (track_uri, artist_uri)
 );
+
+CREATE TABLE IF NOT EXISTS logins
+(
+    username TEXT PRIMARY KEY,
+    hash BLOB,
+    salt BLOB
+)

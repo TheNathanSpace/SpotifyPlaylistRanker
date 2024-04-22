@@ -31,3 +31,18 @@ class Database:
         cursor: Cursor = self.get_db_cursor()
         cursor.executescript(script)
         cursor.close()
+
+    def user_exists(self, username: str):
+        result = self.get_db_cursor().execute("SELECT username FROM logins WHERE username = ?", (username,)).fetchall()
+        if len(result) > 0:
+            return True
+        else:
+            return False
+
+    def create_user(self, username: str, salt: bytes, hash: bytes):
+        self.get_db_connection().execute("INSERT INTO logins VALUES (?, ?, ?)", (username, salt, hash,))
+
+    def get_user_password(self, username: str):
+        result = self.get_db_cursor().execute("SELECT salt, hash FROM logins WHERE username = ?",
+                                              (username,)).fetchone()
+        return result
