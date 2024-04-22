@@ -4,8 +4,11 @@ import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} fro
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
 import {SPOTIFY_PLAYLIST_PATTERN} from "./constants"
+import {CHECK_PLAYLIST, LOGIN} from "./addresses";
+import PropTypes from "prop-types";
 
-const StartPage = () => {
+
+const LoginPage = (props) => {
     const [, setLocation] = useLocation();
     const theme = useTheme();
 
@@ -21,24 +24,30 @@ const StartPage = () => {
     const usernameValue = useRef("");
     const passwordValue = useRef("");
 
-    const validatePlaylist = () => {
+    const playlistURI = useRef();
+
+    const validatePlaylist = async () => {
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
          */
-        const matches = SPOTIFY_PLAYLIST_PATTERN.test(playlistValue.current);
-
-        if (!matches) {
+        const matched = SPOTIFY_PLAYLIST_PATTERN.exec(playlistValue.current);
+        if (!matched) {
             return false;
         }
+        const matchedURI = matched[1];
 
-        /*
-          TODO: Check if playlist exists via Spotify API. Use that to further validate.
-         */
+        const params = {
+            playlist_uri: matchedURI
+        }
+        const target = CHECK_PLAYLIST + "?" + new URLSearchParams(params).toString();
+        const response = await (await fetch(target)).json();
+        playlistURI.current = response.playlist_uri
 
-        return true
+        return response.valid
     }
-    const validateLogin = () => {
+
+    const validateLogin = async () => {
         const fieldsFilled = usernameValue.current && passwordValue.current;
 
         if (!fieldsFilled) {
@@ -48,17 +57,20 @@ const StartPage = () => {
         /*
           TODO: Verify username exists and username/password matches.
          */
-
-        return true;
+        const params = {
+            username: usernameValue.current,
+            password: passwordValue.current
+        }
+        const target = LOGIN + "?" + new URLSearchParams(params).toString();
+        const response = await (await fetch(target)).json();
+        console.log("login response:", response)
+        if (response.valid) {
+            props.setToken(response.token)
+        }
+        return response.valid
     }
 
-    const validateInput = () => {
-        /*
-            TODO: Placeholder code to skip login
-         */
-        const placeholderPlaylistURI = "0Z2vAuYCxFvpkpPs12TDpa";
-        setLocation("/playlist/" + placeholderPlaylistURI);
-
+    const validateInput = async () => {
         /*
          TODO:
             1. Handle input validation
@@ -66,22 +78,26 @@ const StartPage = () => {
             3. Playlist page take input, gets data from back-end, displays it
          */
 
-        // Show errors only after first attempt
-        setShowErrors(true);
-
         // Validate input
-        const newPlaylistIsValid = validatePlaylist();
-        const newLoginIsValid = validateLogin();
+        const newPlaylistIsValid = await validatePlaylist();
+        const newLoginIsValid = await validateLogin();
 
         // If input is valid, go to playlist page
         if (newPlaylistIsValid && newLoginIsValid) {
-            setLocation("/playlist");
+            setLocation("/playlist/" + playlistURI.current);
         }
 
         // Update state, triggering re-render
         setPlaylistIsValid(newPlaylistIsValid);
         setLoginIsValid(newLoginIsValid);
+
+        // Show errors only after first attempt
+        setShowErrors(true);
     };
+
+    const createAccount = async () => {
+        setLocation("/create-account")
+    }
 
     return (
         <div>
@@ -128,21 +144,39 @@ const StartPage = () => {
                         onChange={(event) => passwordValue.current = event.target.value}
                     />
                 </FormControl>
+                {
+                    (!props.accountCreated) ? null : (
+                        <Alert className={"input-margin"} color="primary" variant="soft">
+                            Account created! Login now.
+                        </Alert>
+                    )
+                }
                 <div className={"hor-centered"}>
                     <Button
-                        className={"start-button hor-centered"}
+                        className={"start-button"}
                         color="primary"
                         onClick={validateInput}
                         variant="solid"
                     >
-                        Start!
+                        Login
                     </Button>
                 </div>
+                <div className={"hor-centered"}>
+                    <Button
+                        className={"start-button"}
+                        color="primary"
+                        onClick={createAccount}
+                        variant="outlined"
+                    >
+                        Create Account
+                    </Button>
+                </div>
+
             </Stack>
             <div id={"errors"}>
                 {
                     (loginIsValid || !showErrors) ? null : (
-                        <Alert className={"input-margin"} color="danger" variant="soft" key={"password"}>
+                        <Alert className={"input-margin"} color="danger" variant="soft">
                             Invalid login
                         </Alert>
                     )
@@ -152,4 +186,9 @@ const StartPage = () => {
     );
 }
 
-export default StartPage;
+LoginPage.props = {
+    setToken: PropTypes.any,
+    accountCreated: PropTypes.any
+}
+
+export default LoginPage;

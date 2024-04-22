@@ -43,6 +43,7 @@ The database will be a single, local SQLite database with several tables. See [d
 - [MUI Joy UI](https://mui.com/joy-ui/getting-started/)
 - [Password Hashing/Salting in Python (StackOverflow)](https://stackoverflow.com/a/56915300/7492795)
 - [Python `hashlib` documentation](https://docs.python.org/3/library/hashlib.html)
+- [Auth token stuff](https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications)
 
 ## License
 
