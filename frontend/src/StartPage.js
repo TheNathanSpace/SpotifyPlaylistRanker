@@ -3,6 +3,7 @@ import {useLocation} from "wouter";
 import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
+import {SPOTIFY_PLAYLIST_PATTERN} from "./constants"
 
 const StartPage = () => {
     const [, setLocation] = useLocation();
@@ -25,8 +26,7 @@ const StartPage = () => {
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
          */
-        const pattern = /.*spotify\.com\/playlist\/(.*)/
-        const matches = pattern.test(playlistValue.current);
+        const matches = SPOTIFY_PLAYLIST_PATTERN.test(playlistValue.current);
 
         if (!matches) {
             return false;
@@ -43,7 +43,6 @@ const StartPage = () => {
 
         if (!fieldsFilled) {
             return false;
-
         }
 
         /*
@@ -54,6 +53,12 @@ const StartPage = () => {
     }
 
     const validateInput = () => {
+        /*
+            TODO: Placeholder code to skip login
+         */
+        const placeholderPlaylistURI = "0Z2vAuYCxFvpkpPs12TDpa";
+        setLocation("/playlist/" + placeholderPlaylistURI);
+
         /*
          TODO:
             1. Handle input validation
