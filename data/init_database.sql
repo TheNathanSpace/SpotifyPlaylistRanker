@@ -68,3 +68,11 @@ CREATE TABLE IF NOT EXISTS logins
     salt     BLOB,
     hash     BLOB
 );
+
+CREATE TABLE IF NOT EXISTS login_tokens (
+    username TEXT,
+    token TEXT,
+    expires REAL,
+    PRIMARY KEY (username, token),
+    FOREIGN KEY (username) REFERENCES logins (username)
+)

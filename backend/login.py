@@ -1,3 +1,5 @@
+import time
+import uuid
 from typing import Tuple
 import os
 import hashlib
@@ -45,7 +47,8 @@ class Login:
 
         is_correct = self.is_correct_password(user_salt, user_hash, password)
         if is_correct:
-            return True, "placeholder_token"
+            token = self.gen_user_token(username)
+            return True, token
         else:
             return False, ""
 
@@ -54,3 +57,18 @@ class Login:
 
     def validate_password(self, password: str):
         return len(password) >= 8
+
+    # TODO: Okay, this is definitely not how tokens are supposed to work.
+
+    def gen_user_token(self, username: str) -> str:
+        token = str(uuid.uuid4())
+        expires_time = time.time() + (24 * 60 * 60)  # Token expires after 1 day
+        self.database.insert_user_token(username, token, expires_time)
+        return token
+
+    def check_user_token(self, username: str, token: str):
+        expires = self.database.get_token_expiration(username, token)
+        if time.time() < expires:
+            return True
+        else:
+            return False
