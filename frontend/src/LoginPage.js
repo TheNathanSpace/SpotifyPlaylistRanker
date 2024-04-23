@@ -144,6 +144,13 @@ const LoginPage = (props) => {
                         onChange={(event) => passwordValue.current = event.target.value}
                     />
                 </FormControl>
+                {
+                    (!props.accountCreated) ? null : (
+                        <Alert className={"input-margin"} color="primary" variant="soft">
+                            Account created! Login now.
+                        </Alert>
+                    )
+                }
                 <div className={"hor-centered"}>
                     <Button
                         className={"start-button"}
@@ -180,7 +187,8 @@ const LoginPage = (props) => {
 }
 
 LoginPage.props = {
-    setToken: PropTypes.any
+    setToken: PropTypes.any,
+    accountCreated: PropTypes.any
 }
 
 export default LoginPage;

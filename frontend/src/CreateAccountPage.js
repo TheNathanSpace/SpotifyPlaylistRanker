@@ -1,12 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {useLocation} from "wouter";
-import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
+import {Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
 import {CREATE_ACCOUNT, VALIDATE_ACCOUNT} from "./addresses";
+import PropTypes from "prop-types";
 
 
-const CreateAccountPage = () => {
+const CreateAccountPage = (props) => {
     const [, setLocation] = useLocation();
     const theme = useTheme();
 
@@ -17,8 +18,6 @@ const CreateAccountPage = () => {
 
     const [usernameError, setUsernameError] = useState();
     const [passwordError, setPasswordError] = useState();
-
-    const [accountCreated, setAccountCreated] = useState(false);
 
     /*
         Get values from text inputs
@@ -61,16 +60,8 @@ const CreateAccountPage = () => {
             }
             const target = CREATE_ACCOUNT + "?" + new URLSearchParams(params).toString();
             const response = await (await fetch(target)).json();
-            setAccountCreated(true);
-            /*
-                TODO: A successfully created account should
-                      redirect the user to the login page
-                      with a message that their account was
-                      created and they can log in. There's
-                      got to be a way to pass that information
-                      up out of this component and down into
-                      the login component.
-             */
+            props.setAccountCreated(true);
+            setLocation("/");
         }
         // Update state, triggering re-render
         setUsernameIsValid(validateResponse.username_valid);
@@ -144,16 +135,13 @@ const CreateAccountPage = () => {
                         Login
                     </Button>
                 </div>
-                {
-                    (!accountCreated) ? null : (
-                        <Alert className={"input-margin"} color="primary" variant="outlined">
-                            Account created! Login now.
-                        </Alert>
-                    )
-                }
             </Stack>
         </div>
     );
 }
+
+CreateAccountPage.props = {
+    setAccountCreated: PropTypes.bool
+};
 
 export default CreateAccountPage;

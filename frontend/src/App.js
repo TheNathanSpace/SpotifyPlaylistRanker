@@ -7,6 +7,7 @@ import CreateAccountPage from "./CreateAccountPage";
 
 function App() {
     const [token, setToken] = useState();
+    const [accountCreated, setAccountCreated] = useState()
 
     /*
         If a token does not exist, then force the login page.
@@ -22,10 +23,10 @@ function App() {
                         !token ?
                             <Switch>
                                 <Route path="/">
-                                    <LoginPage setToken={setToken}/>
+                                    <LoginPage setToken={setToken} accountCreated={accountCreated}/>
                                 </Route>
                                 <Route path="/create-account">
-                                    <CreateAccountPage/>
+                                    <CreateAccountPage setAccountCreated={setAccountCreated}/>
                                 </Route>
                             </Switch>
                             : <></>
