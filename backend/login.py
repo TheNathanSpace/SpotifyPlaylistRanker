@@ -4,7 +4,10 @@ from typing import Tuple
 import os
 import hashlib
 import hmac
+import jwt
+from dotenv import load_dotenv
 
+import util
 from database import Database
 
 
@@ -13,7 +16,10 @@ from database import Database
 
 class Login:
     def __init__(self, database: Database):
+        self.jwt_algo = "HS256"
         self.database = database
+        load_dotenv(dotenv_path=(util.get_data_dir() / "secret.env"))
+        self.jwt_secret_key = os.environ["jwt_secret_key"]
 
     def hash_new_password(self, password: str) -> Tuple[bytes, bytes]:
         """
@@ -58,17 +64,16 @@ class Login:
     def validate_password(self, password: str):
         return len(password) >= 8
 
-    # TODO: Okay, this is definitely not how tokens are supposed to work.
-
     def gen_user_token(self, username: str) -> str:
-        token = str(uuid.uuid4())
         expires_time = time.time() + (24 * 60 * 60)  # Token expires after 1 day
-        self.database.insert_user_token(username, token, expires_time)
-        return token
+        encoded_jwt = jwt.encode(payload={"username": username, "exp": expires_time},
+                                 key=self.jwt_secret_key,
+                                 algorithm=self.jwt_algo)
+        return encoded_jwt
 
-    def check_user_token(self, username: str, token: str):
-        expires = self.database.get_token_expiration(username, token)
-        if time.time() < expires:
-            return True
-        else:
-            return False
+    def check_user_token(self, token: str) -> str:
+        try:
+            payload = jwt.decode(token, self.jwt_secret_key, algorithms=[self.jwt_algo])
+            return payload["username"]
+        except:
+            return None

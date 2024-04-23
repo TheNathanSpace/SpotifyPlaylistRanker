@@ -57,16 +57,3 @@ class Database:
             result = cursor.execute("SELECT salt, hash FROM logins WHERE username = ?;",
                                     (username,)).fetchone()
             return result
-
-    def insert_user_token(self, username: str, token: str, expires_time: float):
-        with self.get_db_cursor() as cursor:
-            cursor.execute("INSERT INTO login_tokens VALUES (?, ?, ?);", (username, token, expires_time,))
-
-    def get_token_expiration(self, username: str, token: str):
-        with self.get_db_cursor() as cursor:
-            results = cursor.execute("SELECT expires FROM login_tokens WHERE username = ? AND token = ?;",
-                                     (username, token,)).fetchall()
-            if len(results) > 0:
-                return results[0][0]
-            else:
-                return None

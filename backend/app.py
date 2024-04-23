@@ -1,9 +1,13 @@
+from dotenv import load_dotenv
 from flask import Flask, request
 
 from flask_cors import CORS
 
+import util
 from database import Database
 from login import Login
+
+load_dotenv(dotenv_path=util.init_env())
 
 app = Flask(__name__)
 cors = CORS(app)
