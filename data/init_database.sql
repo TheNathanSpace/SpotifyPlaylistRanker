@@ -2,7 +2,8 @@ CREATE TABLE IF NOT EXISTS user
 (
     uri        TEXT PRIMARY KEY,
     name       TEXT,
-    user_image BLOB
+    user_image BLOB,
+    expires    REAL
 );
 
 CREATE TABLE IF NOT EXISTS playlist
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS playlist
     image       BLOB,
     description TEXT,
     owner_uri   TEXT,
+    expires     REAL,
     FOREIGN KEY (owner_uri) REFERENCES user (uri)
 );
 
@@ -41,7 +43,8 @@ CREATE TABLE IF NOT EXISTS user
 (
     uri        TEXT PRIMARY KEY,
     name       TEXT,
-    user_image BLOB
+    user_image BLOB,
+    expires    REAL
 );
 
 CREATE TABLE IF NOT EXISTS playlist_track_xref

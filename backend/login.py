@@ -1,5 +1,4 @@
 import time
-import uuid
 from typing import Tuple
 import os
 import hashlib
@@ -18,7 +17,7 @@ class Login:
     def __init__(self, database: Database):
         self.jwt_algo = "HS256"
         self.database = database
-        load_dotenv(dotenv_path=(util.get_data_dir() / "secret.env"))
+        load_dotenv(dotenv_path=(util.get_env_path()))
         self.jwt_secret_key = os.environ["jwt_secret_key"]
 
     def hash_new_password(self, password: str) -> Tuple[bytes, bytes]:
