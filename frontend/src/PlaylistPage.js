@@ -1,23 +1,37 @@
-import React, {useState} from 'react';
-import playlistPlaceholder from "./images/playlist_placeholder.jpg"
-import userPlaceholder from "./images/user_placeholder.png"
+import React, {useEffect, useState} from 'react';
+import greyImage from "./images/grey.png"
 import {Button, Divider} from "@mui/joy";
-import {useLocation} from "wouter";
-import {useParams} from "wouter";
+import {useLocation, useParams, useRoute} from "wouter";
+import {CHECK_PLAYLIST} from "./addresses";
+import PropTypes from "prop-types";
 
-const PlaylistPage = () => {
+const PlaylistPage = (props) => {
     const [location, setLocation] = useLocation();
-    const params = useParams();
 
     const [mouseInProfile, setMouseInProfile] = useState(false);
     const [mouseInPlaylist, setMouseInPlaylist] = useState(false);
 
-    const playlistURI = params.playlistURI;
-    const profileURL = "https://open.spotify.com/user/0iiohbbq3rib2z3jnmd1piqia";
+    const [playlistData, setPlaylistData] = useState({
+        playlist_uri: "",
+        playlist_name: "",
+        playlist_description: "",
+        profile_uri: "",
+        profile_username: ""
+    });
 
-    const playlistName = "ntwicm 4751914 remix";
-    const playlistDescription = "EVERY good song that currently exists";
-    const profileUsername = "Nathan";
+    /*
+       Use useEffect hook with no dependencies to fetch playlist data on initial load.
+    */
+    useEffect(() => {
+        // This is so dumb https://stackoverflow.com/a/64079172/7492795
+        (async () => {
+            const urlParams = {
+                playlist_uri: props.playlist_uri
+            }
+            const target = CHECK_PLAYLIST + "?" + new URLSearchParams(urlParams).toString();
+            const response = await (await fetch(target)).json();
+        })();
+    }, []);
 
     const openURL = (url) => {
         Object.assign(document.createElement('a'), {
@@ -27,27 +41,22 @@ const PlaylistPage = () => {
         }).click();
     }
 
-    const rankPagePattern = /.*playlist\/(.*)\/rank(.*)/
-    const isRankPage = () => {
-        return rankPagePattern.test(location);
-    }
-
     const toggleRanking = () => {
-        if (isRankPage()) {
-            setLocation("/playlist/" + playlistURI)
-        } else {
-            setLocation("/playlist/" + playlistURI + "/rank")
-        }
+        setLocation("~" + props.buttonTarget.replace("%s", props.playlist_uri))
     }
 
     const getPlaylistURL = () => {
-        return "https://open.spotify.com/playlist/" + playlistURI;
+        return "https://open.spotify.com/playlist/" + props.playlist_uri;
     }
+
+    /*
+        TODO: Show MUI skeleton while retrieving playlist data
+     */
 
     return (
         <div>
             <div className={"vert-centered"}>
-                <img className={"playlist-image playlist-info-column clickable"} src={playlistPlaceholder}
+                <img className={"playlist-image playlist-info-column clickable"} src={greyImage}
                      alt={"Playlist thumbnail"}
                      onClick={() => {
                          openURL(getPlaylistURL())
@@ -70,14 +79,14 @@ const PlaylistPage = () => {
                             setMouseInPlaylist(false)
                         }}
                     >
-                        {playlistName}
+                        {playlistData.playlist_name}
                     </h2>
-                    <div className={"playlist-description"}>"{playlistDescription}"</div>
+                    <div className={"playlist-description"}>"{playlistData.playlist_description}"</div>
                     <div className={"vert-centered"}>
                         <span style={{paddingRight: "0.8em"}}>by</span>
                         <div className={"clickable vert-centered " + (mouseInProfile ? "underlined" : "")}
                              onClick={() => {
-                                 openURL(profileURL)
+                                 openURL("https://open.spotify.com/user/" + playlistData.profile_uri)
                              }}
                              onMouseEnter={() => {
                                  setMouseInProfile(true)
@@ -86,8 +95,8 @@ const PlaylistPage = () => {
                                  setMouseInProfile(false)
                              }}
                         >
-                            <img className={"profile-image"} src={userPlaceholder} alt={"User profile"}/>
-                            <span style={{paddingLeft: "0.4em"}}>{profileUsername}</span>
+                            <img className={"profile-image"} src={greyImage} alt={"User profile"}/>
+                            <span style={{paddingLeft: "0.4em"}}>{playlistData.profile_username}</span>
                         </div>
                     </div>
 
@@ -101,7 +110,7 @@ const PlaylistPage = () => {
                             toggleRanking()
                         }}
                     >
-                        { isRankPage() ? "Stop ranking" : "Start ranking!"}
+                        {props.buttonLabel}
                     </Button>
                 </div>
             </div>
@@ -110,6 +119,12 @@ const PlaylistPage = () => {
             </div>
         </div>
     );
+}
+
+PlaylistPage.props = {
+    playlist_uri: PropTypes.string,
+    buttonLabel: PropTypes.string,
+    buttonTarget: PropTypes.string
 }
 
 export default PlaylistPage;

@@ -1,57 +1,44 @@
 import LoginPage from "./LoginPage";
-import {Route, Switch} from "wouter";
-import PlaylistInfo from "./PlaylistPage";
+import {Redirect, Route, Switch, useLocation} from "wouter";
 import Header from "./Header";
 import {useState} from "react";
 import CreateAccountPage from "./CreateAccountPage";
+import PlaylistPageRouting from "./PlaylistPageRouting";
 
 function App() {
-    const [token, setToken] = useState();
+    const [token, setToken] = useState(null);
     const [accountCreated, setAccountCreated] = useState()
-
-    /*
-        If a token does not exist, then force the login page.
-        Otherwise, perform normal routing.
-     */
 
     return (
         <>
             <Header/>
             <div className="content">
+                {/*<p>Current token: {token}.</p>*/}
                 <div className={"hor-centered vert-centered"}>
-                    {
-                        !token ?
-                            <Switch>
-                                <Route path="/">
-                                    <LoginPage setToken={setToken} accountCreated={accountCreated}/>
-                                </Route>
-                                <Route path="/create-account">
-                                    <CreateAccountPage setAccountCreated={setAccountCreated}/>
-                                </Route>
-                            </Switch>
-                            : <></>
-                    }
-                    {
-                        token ?
-                            <Switch>
-                                <Route path="/">
-                                    <LoginPage setToken={setToken}/>
-                                </Route>
-                                <Route path="/playlist/:playlistURI">
-                                    <div>
-                                        <PlaylistInfo/>
-                                        Tracks as ranked by current user
-                                    </div>
-                                </Route>
-                                <Route path="/playlist/:playlistURI/rank">
-                                    <div>
-                                        <PlaylistInfo/>
-                                        Interactive track ranking menu
-                                    </div>
-                                </Route>
-                            </Switch>
-                            : <></>
-                    }
+                    <Switch>
+                        <Route path="/">
+                            <LoginPage token={token} setToken={setToken} accountCreated={accountCreated}/>
+                        </Route>
+                        <Route path="/create-account">
+                            <CreateAccountPage setAccountCreated={setAccountCreated}/>
+                        </Route>
+                        <Route path="/playlist/:playlist_uri" nest>
+                            {
+                                /*
+                                    If a token does not exist, then force the login page.
+                                    Otherwise, perform normal routing.
+                                 */
+                                token !== null
+                                    ?
+                                    <PlaylistPageRouting/>
+                                    :
+                                    <Redirect to={"/"}/>
+                            }
+                        </Route>
+                        <Route path="">
+                            <Redirect to={"/"}/>
+                        </Route>
+                    </Switch>
                 </div>
             </div>
         </>

@@ -54,30 +54,19 @@ const LoginPage = (props) => {
             return false;
         }
 
-        /*
-          TODO: Verify username exists and username/password matches.
-         */
         const params = {
             username: usernameValue.current,
             password: passwordValue.current
         }
         const target = LOGIN + "?" + new URLSearchParams(params).toString();
         const response = await (await fetch(target)).json();
-        console.log("login response:", response)
         if (response.valid) {
-            props.setToken(response.token)
+            props.setToken(response.token);
         }
         return response.valid
     }
 
     const validateInput = async () => {
-        /*
-         TODO:
-            1. Handle input validation
-            2. Route to /playlist, injecting with input
-            3. Playlist page take input, gets data from back-end, displays it
-         */
-
         // Validate input
         const newPlaylistIsValid = await validatePlaylist();
         const newLoginIsValid = await validateLogin();
@@ -187,6 +176,7 @@ const LoginPage = (props) => {
 }
 
 LoginPage.props = {
+    token: PropTypes.any,
     setToken: PropTypes.any,
     accountCreated: PropTypes.any
 }
