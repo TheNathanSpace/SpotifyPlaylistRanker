@@ -6,6 +6,7 @@ from flask_cors import CORS
 import util
 from database import Database
 from login import Login
+from spotify_proxy import SpotifyProxy
 
 load_dotenv(dotenv_path=util.init_env())
 
@@ -17,16 +18,17 @@ DATABASE.init_database()
 
 LOGIN = Login(DATABASE)
 
+SPOTIFY = SpotifyProxy()
+SPOTIFY.login()
+
 
 @app.route('/check-playlist')
 def checkPlaylist():
     playlist_uri = request.args.get('playlist_uri')
-
-    # TODO: Validate playlist with Spotify API
-
+    valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
     return {
         "playlist_uri": playlist_uri,
-        "valid": True
+        "valid": valid
     }
 
 
