@@ -5,10 +5,12 @@ import {useLocation} from "wouter";
 
 const Header = () => {
     const theme = useTheme();
-    const [, setLocation] = useLocation();
+    const [location, setLocation] = useLocation();
 
     const goHome = () => {
-        setLocation("/");
+        if (location != "/") {
+            setLocation("/");
+        }
     }
 
     return (
