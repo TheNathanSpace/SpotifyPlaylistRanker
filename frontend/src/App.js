@@ -1,13 +1,15 @@
 import LoginPage from "./LoginPage";
-import {Redirect, Route, Switch, useLocation} from "wouter";
+import {Redirect, Route, Switch} from "wouter";
 import Header from "./Header";
-import {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import CreateAccountPage from "./CreateAccountPage";
-import PlaylistPageRouting from "./PlaylistPageRouting";
+import PlaylistInfo from "./PlaylistPage";
+import LowerPlaylistPage from "./LowerPlaylistPage";
 
 function App() {
     const [token, setToken] = useState(null);
     const [accountCreated, setAccountCreated] = useState()
+    const [isRanking, setIsRanking] = useState(false);
 
     return (
         <>
@@ -30,11 +32,14 @@ function App() {
                                  */
                                 token
                                     ?
-                                    <PlaylistPageRouting/>
+                                    <div>
+                                        <PlaylistInfo setIsRanking={setIsRanking}/>
+                                        <LowerPlaylistPage isRanking={isRanking}/>
+                                    </div>
                                     :
                                     <>
                                         <p>no token. redirecting</p>
-                                    <Redirect to={"~/"}/>
+                                        <Redirect to={"~/"}/>
                                     </>
                             }
                         </Route>
