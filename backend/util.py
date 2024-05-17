@@ -1,6 +1,7 @@
 import re
 import secrets
 import string
+import time
 from pathlib import Path
 
 
@@ -35,3 +36,7 @@ def to_short_uri(long: str) -> str:
     matched = re.match(pattern=pattern, string=long)
     if matched:
         return matched.group(2)
+
+
+def get_one_day_expr() -> float:
+    return time.time() + (24 * 60 * 60)

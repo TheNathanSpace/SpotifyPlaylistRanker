@@ -1,8 +1,11 @@
 import sqlite3
+import time
 from pathlib import Path
 from sqlite3 import Connection, Cursor
 
 import util
+from data_objects.Playlist import Playlist
+from data_objects.User import User
 
 
 class WithCursor:
@@ -57,3 +60,34 @@ class Database:
             result = cursor.execute("SELECT salt, hash FROM logins WHERE username = ?;",
                                     (username,)).fetchone()
             return result
+
+    def get_playlist(self, playlist_uri: str) -> Playlist:
+        with self.get_db_cursor() as cursor:
+            result = cursor.execute("SELECT uri, name, image, description, owner_uri, expires FROM playlist WHERE uri = ?;",
+                                    (playlist_uri,))
+            if len(result) > 0:
+                result = result.fetchone()
+                if time.time() < result[5]:
+                    return None
+                else:
+                    return Playlist(result[0], result[1], result[2], result[3], result[4])
+            else:
+                return None
+
+    def get_user(self, user_uri: str) -> User:
+        with self.get_db_cursor() as cursor:
+            result = cursor.execute("SELECT uri, name, user_image, expires FROM user WHERE uri = ?;",
+                                    (user_uri,))
+            if len(result) > 0:
+                result = result.fetchone()
+                if time.time() < result[3]:
+                    return None
+                else:
+                    return User(result[0], result[1], result[2])
+            else:
+                return None
+
+    def insert_playlist(self, user: User, playlist: Playlist):
+        with self.get_db_cursor() as cursor:
+            cursor.execute("INSERT OR UPDATE INTO user VALUES (?, ?, ?, ?);", user.to_tuple())
+            cursor.execute("INSERT OR UPDATE INTO playlist VALUES (?, ?, ?, ?, ?, ?);", playlist.to_tuple())
