@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import greyImage from "./images/grey.png"
 import {Button, Divider} from "@mui/joy";
 import {useLocation, useParams, useRoute} from "wouter";
-import {CHECK_PLAYLIST} from "./addresses";
+import {GET_PLAYLIST_DATA} from "./addresses";
 import PropTypes from "prop-types";
 
 const PlaylistPage = (props) => {
@@ -15,9 +15,18 @@ const PlaylistPage = (props) => {
         playlist_uri: "",
         playlist_name: "",
         playlist_description: "",
+        playlist_image: greyImage,
         profile_uri: "",
-        profile_username: ""
+        profile_username: "",
+        profile_image: greyImage
     });
+
+    useEffect(()=>{
+        /*
+        Query logic
+        */
+        console.log('i fire once');
+    },[]);
 
     /*
        Use useEffect hook with no dependencies to fetch playlist data on initial load.
@@ -28,8 +37,18 @@ const PlaylistPage = (props) => {
             const urlParams = {
                 playlist_uri: props.playlist_uri
             }
-            const target = CHECK_PLAYLIST + "?" + new URLSearchParams(urlParams).toString();
+            const target = GET_PLAYLIST_DATA + "?" + new URLSearchParams(urlParams).toString();
             const response = await (await fetch(target)).json();
+            setPlaylistData({
+                playlist_uri: props.playlist_uri,
+                playlist_name: response.playlist_name,
+                playlist_description: response.playlist_description,
+                playlist_image: response.playlist_image,
+                profile_uri: response.profile_uri,
+                profile_username: response.profile_username,
+                profile_image: response.profile_image
+            })
+            console.log("Playlist data:", response)
         })();
     }, []);
 
@@ -56,7 +75,7 @@ const PlaylistPage = (props) => {
     return (
         <div>
             <div className={"vert-centered"}>
-                <img className={"playlist-image playlist-info-column clickable"} src={greyImage}
+                <img className={"playlist-image playlist-info-column clickable"} src={playlistData.playlist_image}
                      alt={"Playlist thumbnail"}
                      onClick={() => {
                          openURL(getPlaylistURL())
@@ -95,7 +114,7 @@ const PlaylistPage = (props) => {
                                  setMouseInProfile(false)
                              }}
                         >
-                            <img className={"profile-image"} src={greyImage} alt={"User profile"}/>
+                            <img className={"profile-image"} src={playlistData.profile_image} alt={"User profile"}/>
                             <span style={{paddingLeft: "0.4em"}}>{playlistData.profile_username}</span>
                         </div>
                     </div>

@@ -28,15 +28,21 @@ function App() {
                                     If a token does not exist, then force the login page.
                                     Otherwise, perform normal routing.
                                  */
-                                token !== null
+                                token
                                     ?
                                     <PlaylistPageRouting/>
                                     :
-                                    <Redirect to={"/"}/>
+                                    <>
+                                        <p>no token. redirecting</p>
+                                    <Redirect to={"~/"}/>
+                                    </>
                             }
                         </Route>
                         <Route path="">
-                            <Redirect to={"/"}/>
+                            <>
+                                <p>no path. redirecting</p>
+                                <Redirect to={"~/"}/>
+                            </>
                         </Route>
                     </Switch>
                 </div>

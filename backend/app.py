@@ -32,6 +32,13 @@ def checkPlaylist():
     }
 
 
+@app.route('/playlist-data')
+def playlistData():
+    playlist_uri = request.args.get('playlist_uri')
+    response = SPOTIFY.get_playlist_data(util.to_full_playlist_uri(playlist_uri))
+    return response
+
+
 @app.route('/validate-account')
 def validate_account():
     username = request.args.get('username')

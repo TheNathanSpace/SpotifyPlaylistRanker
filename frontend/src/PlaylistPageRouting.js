@@ -5,6 +5,12 @@ import PlaylistInfo from "./PlaylistPage";
 const PlaylistPageRouting = () => {
     const params = useParams();
 
+    /*
+     TODO: Have to break the button out into its own component linked to the secondary playlist component.
+           The way it is now, it re-renders the entire playlist component every time you click the button
+           (which triggers a Spotify API call).
+    */
+
     return (
         <>
             <Route path="/">

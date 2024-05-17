@@ -1,3 +1,4 @@
+import re
 import secrets
 import string
 from pathlib import Path
@@ -27,3 +28,10 @@ def init_env():
 
 def to_full_playlist_uri(short: str) -> str:
     return "spotify:playlist:" + short
+
+
+def to_short_uri(long: str) -> str:
+    pattern = "spotify:(.*):(.*)"
+    matched = re.match(pattern=pattern, string=long)
+    if matched:
+        return matched.group(2)
