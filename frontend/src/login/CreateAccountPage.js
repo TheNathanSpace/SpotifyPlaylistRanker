@@ -3,7 +3,7 @@ import {useLocation} from "wouter";
 import {Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
-import {CREATE_ACCOUNT, VALIDATE_ACCOUNT} from "./addresses";
+import {CREATE_ACCOUNT, VALIDATE_ACCOUNT} from "../util/addresses";
 import PropTypes from "prop-types";
 
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {useTheme} from "@mui/joy";
-import logo192 from "./images/logo192.png"
+import logo192 from "../images/logo192.png"
 import {useLocation} from "wouter";
 
 const Header = () => {

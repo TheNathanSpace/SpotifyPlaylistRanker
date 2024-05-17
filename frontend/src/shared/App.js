@@ -1,10 +1,10 @@
-import LoginPage from "./LoginPage";
+import LoginPage from "../login/LoginPage";
 import {Redirect, Route, Switch} from "wouter";
 import Header from "./Header";
-import React, {useEffect, useRef, useState} from "react";
-import CreateAccountPage from "./CreateAccountPage";
-import PlaylistInfo from "./PlaylistPage";
-import LowerPlaylistPage from "./LowerPlaylistPage";
+import React, {useState} from "react";
+import CreateAccountPage from "../login/CreateAccountPage";
+import PlaylistInfo from "../playlist/PlaylistPage";
+import LowerPlaylistPage from "../playlist/LowerPlaylistPage";
 
 function App() {
     const [token, setToken] = useState(null);

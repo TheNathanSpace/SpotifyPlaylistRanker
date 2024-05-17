@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import greyImage from "./images/grey.png"
+import greyImage from "../images/grey.png"
 import {Divider} from "@mui/joy";
 import {useParams} from "wouter";
-import {GET_PLAYLIST_DATA} from "./addresses";
+import {GET_PLAYLIST_DATA} from "../util/addresses";
 import PropTypes from "prop-types";
 import ToggleRankingButton from "./ToggleRankingButton";
 
