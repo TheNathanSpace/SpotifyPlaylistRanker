@@ -73,56 +73,57 @@ const PlaylistPage = (props) => {
     const getPlaylistURL = () => {
         return "https://open.spotify.com/playlist/" + params.playlist_uri;
     }
+    const getProfileURL = () => {
+        return "https://open.spotify.com/user/" + playlistData.profile_uri
+    }
 
     /*
         TODO: Show MUI skeleton while retrieving playlist data
      */
 
+
     return (
         <div>
             <div className={"vert-centered"}>
-                <img className={"playlist-image playlist-info-column clickable"} src={playlistData.playlist_image}
-                     alt={"Playlist thumbnail"}
-                     onClick={() => {
-                         openURL(getPlaylistURL())
-                     }}
-                     onMouseEnter={() => {
-                         setMouseInPlaylist(true)
-                     }} onMouseLeave={() => {
-                    setMouseInPlaylist(false)
-                }}
-                />
+                <a className={"remove-default"} href={getPlaylistURL()} target="_blank" rel="noreferrer">
+                    <img className={"playlist-image playlist-info-column clickable"} src={playlistData.playlist_image}
+                         alt={"Playlist thumbnail"}
+                         onMouseEnter={() => {
+                             setMouseInPlaylist(true)
+                         }} onMouseLeave={() => {
+                        setMouseInPlaylist(false)
+                    }}
+                    />
+                </a>
                 <div className={"playlist-info-column"}>
-                    <h2 className={"clickable playlist-name " + (mouseInPlaylist ? "underlined" : "")}
-                        onClick={() => {
-                            openURL(getPlaylistURL())
-                        }}
-                        onMouseEnter={() => {
-                            setMouseInPlaylist(true)
-                        }}
-                        onMouseLeave={() => {
-                            setMouseInPlaylist(false)
-                        }}
-                    >
-                        {playlistData.playlist_name}
-                    </h2>
+                    <a className={"remove-default"} href={getPlaylistURL()} target="_blank" rel="noreferrer">
+                        <h2 className={"clickable playlist-name " + (mouseInPlaylist ? "underlined" : "")}
+                            onMouseEnter={() => {
+                                setMouseInPlaylist(true)
+                            }}
+                            onMouseLeave={() => {
+                                setMouseInPlaylist(false)
+                            }}
+                        >
+                            {playlistData.playlist_name}
+                        </h2>
+                    </a>
                     <div className={"playlist-description"}>"{playlistData.playlist_description}"</div>
                     <div className={"vert-centered"}>
                         <span style={{paddingRight: "0.8em"}}>by</span>
-                        <div className={"clickable vert-centered " + (mouseInProfile ? "underlined" : "")}
-                             onClick={() => {
-                                 openURL("https://open.spotify.com/user/" + playlistData.profile_uri)
-                             }}
-                             onMouseEnter={() => {
-                                 setMouseInProfile(true)
-                             }}
-                             onMouseLeave={() => {
-                                 setMouseInProfile(false)
-                             }}
-                        >
-                            <img className={"profile-image"} src={playlistData.profile_image} alt={"User profile"}/>
-                            <span style={{paddingLeft: "0.4em"}}>{playlistData.profile_username}</span>
-                        </div>
+                        <a className={"remove-default"} href={getProfileURL()} target="_blank" rel="noreferrer">
+                            <div className={"clickable vert-centered " + (mouseInProfile ? "underlined" : "")}
+                                 onMouseEnter={() => {
+                                     setMouseInProfile(true)
+                                 }}
+                                 onMouseLeave={() => {
+                                     setMouseInProfile(false)
+                                 }}
+                            >
+                                <img className={"profile-image"} src={playlistData.profile_image} alt={"User profile"}/>
+                                <span style={{paddingLeft: "0.4em"}}>{playlistData.profile_username}</span>
+                            </div>
+                        </a>
                     </div>
 
                 </div>

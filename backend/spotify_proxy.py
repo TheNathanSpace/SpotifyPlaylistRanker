@@ -32,6 +32,7 @@ class SpotifyProxy:
     def get_user_data(self, user_uri: str):
         cached_user = self.database.get_user(user_uri)
         if not cached_user:
+            print(f"User not cached: {user_uri}")
             user = self.spotify.user(user=user_uri)
 
             if len(user["images"]) > 0:
@@ -47,6 +48,7 @@ class SpotifyProxy:
         cached_playlist = self.database.get_playlist(playlist_uri)
         cached_user = None
         if not cached_playlist:
+            print(f"Playlist not cached: {playlist_uri}")
             playlist = self.spotify.playlist(playlist_id=playlist_uri,
                                              fields="name,description,images,owner.uri,owner.display_name")
             if len(playlist["images"]) > 0:

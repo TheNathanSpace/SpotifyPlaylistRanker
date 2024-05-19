@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useLocation} from "wouter";
 import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
@@ -47,6 +47,22 @@ const LoginPage = (props) => {
         return response.valid
     }
 
+    /*
+        When token is updated, redirect to playlist page
+     */
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false // toggle flag after first render/mounting
+            return;
+        }
+
+        // If input is valid, go to playlist page
+        if (playlistIsValid && loginIsValid && props.token) {
+            setLocation("/playlist/" + playlistURI.current);
+        }
+    }, [props.token, playlistIsValid, loginIsValid]);
+
     const validateLogin = async () => {
         const fieldsFilled = usernameValue.current && passwordValue.current;
 
@@ -70,11 +86,6 @@ const LoginPage = (props) => {
         // Validate input
         const newPlaylistIsValid = await validatePlaylist();
         const newLoginIsValid = await validateLogin();
-
-        // If input is valid, go to playlist page
-        if (newPlaylistIsValid && newLoginIsValid) {
-            setLocation("/playlist/" + playlistURI.current);
-        }
 
         // Update state, triggering re-render
         setPlaylistIsValid(newPlaylistIsValid);
