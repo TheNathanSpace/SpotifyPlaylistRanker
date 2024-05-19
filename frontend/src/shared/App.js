@@ -38,14 +38,12 @@ function App() {
                                     </div>
                                     :
                                     <>
-                                        <p>no token. redirecting</p>
                                         <Redirect to={"~/"}/>
                                     </>
                             }
                         </Route>
                         <Route path="">
                             <>
-                                <p>no path. redirecting</p>
                                 <Redirect to={"~/"}/>
                             </>
                         </Route>
