@@ -1,3 +1,4 @@
+import base64
 import os
 
 import requests
@@ -62,13 +63,13 @@ class SpotifyProxy:
         else:
             cached_user = self.get_user_data(cached_playlist.owner_uri)
 
-        self.database.insert_playlist(cached_user, cached_playlist)
+        self.database.insert_playlist_user(cached_user, cached_playlist)
 
         return {
             "playlist_name": cached_playlist.name,
             "playlist_description": cached_playlist.description,
-            "playlist_image": cached_playlist.image,
+            "playlist_image": base64.b64encode(cached_playlist.image).decode('ASCII'),
             "profile_uri": cached_user.uri,
             "profile_username": cached_user.name,
-            "profile_image": cached_user.user_image
+            "profile_image": base64.b64encode(cached_user.user_image).decode('ASCII')
         }

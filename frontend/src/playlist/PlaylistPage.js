@@ -33,14 +33,31 @@ const PlaylistPage = (props) => {
             }
             const target = GET_PLAYLIST_DATA + "?" + new URLSearchParams(urlParams).toString();
             const response = await (await fetch(target)).json();
+
+            /*
+                Convert base64 images to blob URLs
+             */
+            let playlistImage;
+            let userImage;
+            const playlistURL = `data:image/png;base64,${response.playlist_image}`
+            const userURL = `data:image/png;base64,${response.profile_image}`
+            const playlistPromise = fetch(playlistURL);
+            const userPromise = fetch(userURL);
+            await Promise.allSettled([playlistPromise, userPromise]).then(async ([fetchedPlaylist, fetchedUser]) => {
+                await Promise.allSettled([fetchedPlaylist.value.blob(), fetchedUser.value.blob()]).then(([playlistBlob, userBlob]) => {
+                    playlistImage = URL.createObjectURL(playlistBlob.value);
+                    userImage = URL.createObjectURL(userBlob.value);
+                });
+            });
+
             setPlaylistData({
                 playlist_uri: params.playlist_uri,
                 playlist_name: response.playlist_name,
                 playlist_description: response.playlist_description,
-                playlist_image: response.playlist_image,
+                playlist_image: playlistImage,
                 profile_uri: response.profile_uri,
                 profile_username: response.profile_username,
-                profile_image: response.profile_image
+                profile_image: userImage
             })
         })();
     }, []);

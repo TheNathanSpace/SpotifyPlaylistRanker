@@ -64,10 +64,10 @@ class Database:
     def get_playlist(self, playlist_uri: str) -> Playlist:
         with self.get_db_cursor() as cursor:
             result = cursor.execute("SELECT uri, name, image, description, owner_uri, expires FROM playlist WHERE uri = ?;",
-                                    (playlist_uri,))
+                                    (playlist_uri,)).fetchall()
             if len(result) > 0:
-                result = result.fetchone()
-                if time.time() < result[5]:
+                result = result[0]
+                if time.time() >= result[5]:
                     return None
                 else:
                     return Playlist(result[0], result[1], result[2], result[3], result[4])
@@ -77,17 +77,17 @@ class Database:
     def get_user(self, user_uri: str) -> User:
         with self.get_db_cursor() as cursor:
             result = cursor.execute("SELECT uri, name, user_image, expires FROM user WHERE uri = ?;",
-                                    (user_uri,))
+                                    (user_uri,)).fetchall()
             if len(result) > 0:
-                result = result.fetchone()
-                if time.time() < result[3]:
+                result = result[0]
+                if time.time() >= result[3]:
                     return None
                 else:
                     return User(result[0], result[1], result[2])
             else:
                 return None
 
-    def insert_playlist(self, user: User, playlist: Playlist):
+    def insert_playlist_user(self, user: User, playlist: Playlist):
         with self.get_db_cursor() as cursor:
-            cursor.execute("INSERT OR UPDATE INTO user VALUES (?, ?, ?, ?);", user.to_tuple())
-            cursor.execute("INSERT OR UPDATE INTO playlist VALUES (?, ?, ?, ?, ?, ?);", playlist.to_tuple())
+            cursor.execute("INSERT OR REPLACE INTO user VALUES (?, ?, ?, ?);", user.to_tuple())
+            cursor.execute("INSERT OR REPLACE INTO playlist VALUES (?, ?, ?, ?, ?, ?);", playlist.to_tuple())

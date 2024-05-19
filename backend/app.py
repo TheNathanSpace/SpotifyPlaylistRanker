@@ -18,7 +18,7 @@ DATABASE.init_database()
 
 LOGIN = Login(DATABASE)
 
-SPOTIFY = SpotifyProxy()
+SPOTIFY = SpotifyProxy(DATABASE)
 SPOTIFY.login()
 
 
