@@ -1,10 +1,12 @@
 import sqlite3
 import time
 from pathlib import Path
-from sqlite3 import Connection, Cursor
 
 import util
+from data_objects.Album import Album
+from data_objects.Artist import Artist
 from data_objects.Playlist import Playlist
+from data_objects.Track import Track
 from data_objects.User import User
 
 
@@ -63,8 +65,9 @@ class Database:
 
     def get_playlist(self, playlist_uri: str) -> Playlist:
         with self.get_db_cursor() as cursor:
-            result = cursor.execute("SELECT uri, name, image, description, owner_uri, expires FROM playlist WHERE uri = ?;",
-                                    (playlist_uri,)).fetchall()
+            result = cursor.execute(
+                "SELECT uri, name, image, description, owner_uri, expires FROM playlist WHERE uri = ?;",
+                (playlist_uri,)).fetchall()
             if len(result) > 0:
                 result = result[0]
                 if time.time() >= result[5]:
@@ -91,3 +94,50 @@ class Database:
         with self.get_db_cursor() as cursor:
             cursor.execute("INSERT OR REPLACE INTO user VALUES (?, ?, ?, ?);", user.to_tuple())
             cursor.execute("INSERT OR REPLACE INTO playlist VALUES (?, ?, ?, ?, ?, ?);", playlist.to_tuple())
+
+    def get_playlist_tracks(self, playlist_uri: str) -> [()]:
+        with self.get_db_cursor() as cursor:
+            # Check if there are expired tracks in this playlist
+            expired_tracks = cursor.execute(
+                "SELECT playlist_uri, track_uri, deleted, expires FROM playlist_track_xref WHERE playlist_uri = ? AND deleted = FALSE AND ? > expires;",
+                (playlist_uri, time.time())).fetchall()
+            if len(expired_tracks) > 0:
+                return None
+
+            # Check if there are no tracks in this playlist
+            active_tracks = cursor.execute(
+                "SELECT playlist_uri, track_uri, deleted, expires FROM playlist_track_xref WHERE playlist_uri = ? AND deleted = FALSE;",
+                (playlist_uri,)).fetchall()
+            if len(active_tracks) == 0:
+                return None
+
+            # If neither of the above are true, then return
+            # the current tracks and all other necessary info
+            current_tracks_query = """
+            SELECT pt_x.track_uri, al.uri, ar.uri, t.name, al.name, ar.name, pt_x.deleted
+            FROM 	playlist_track_xref pt_x
+                    JOIN track t ON pt_x.track_uri = t.uri
+                    LEFT JOIN album al ON al.uri = t.album_uri
+                    LEFT JOIN artist ar ON ar.uri = t.artist_uri
+            WHERE pt_x.playlist_uri = ?;"""
+
+            current_tracks = cursor.execute(current_tracks_query, (playlist_uri,)).fetchall()
+            return current_tracks
+
+    def insert_tracks(self, tracks: list[Track], albums: list[Album], artists: list[Artist]):
+        with self.get_db_cursor() as cursor:
+            cursor.executemany("INSERT OR REPLACE INTO album VALUES (?, ?, ?);",
+                               [album.to_tuple() for album in albums])
+            cursor.executemany("INSERT OR REPLACE INTO artist VALUES (?, ?, ?);",
+                               [artist.to_tuple() for artist in artists])
+            cursor.executemany("INSERT OR REPLACE INTO track VALUES (?, ?, ?, ?);",
+                               [track.to_tuple() for track in tracks])
+
+    def link_playlist_tracks(self, playlist_uri: str, track_uris: list[str]):
+        with self.get_db_cursor() as cursor:
+            # First, set all tracks to deleted. Then, replace all
+            # remaining tracks with updated value (not deleted).
+            cursor.execute("UPDATE playlist_track_xref SET deleted = TRUE WHERE playlist_uri = ?;", (playlist_uri,))
+            expires = util.get_one_day_expr()
+            cursor.executemany("INSERT OR REPLACE INTO playlist_track_xref VALUES (?, ?, ?, ?);",
+                               [(playlist_uri, track_uri, False, expires) for track_uri in track_uris])

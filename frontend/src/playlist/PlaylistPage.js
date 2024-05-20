@@ -50,6 +50,8 @@ const PlaylistPage = (props) => {
                 });
             });
 
+            // TODO: Check if the back-end says the playlist is valid.
+            //        If not, display error message and direct to login page.
             setPlaylistData({
                 playlist_uri: params.playlist_uri,
                 playlist_name: response.playlist_name,
@@ -61,14 +63,6 @@ const PlaylistPage = (props) => {
             })
         })();
     }, []);
-
-    const openURL = (url) => {
-        Object.assign(document.createElement('a'), {
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            href: url,
-        }).click();
-    }
 
     const getPlaylistURL = () => {
         return "https://open.spotify.com/playlist/" + params.playlist_uri;
@@ -83,7 +77,7 @@ const PlaylistPage = (props) => {
 
 
     return (
-        <div>
+        <div className={"hor-centered"}>
             <div className={"vert-centered"}>
                 <a className={"remove-default"} href={getPlaylistURL()} target="_blank" rel="noreferrer">
                     <img className={"playlist-image playlist-info-column clickable"} src={playlistData.playlist_image}
@@ -108,7 +102,11 @@ const PlaylistPage = (props) => {
                             {playlistData.playlist_name}
                         </h2>
                     </a>
-                    <div className={"playlist-description"}>"{playlistData.playlist_description}"</div>
+                    {
+                        playlistData.playlist_description ?
+                            <div className={"playlist-description"}>"{playlistData.playlist_description}"</div> : <></>
+                    }
+
                     <div className={"vert-centered"}>
                         <span style={{paddingRight: "0.8em"}}>by</span>
                         <a className={"remove-default"} href={getProfileURL()} target="_blank" rel="noreferrer">
@@ -132,9 +130,6 @@ const PlaylistPage = (props) => {
                         setIsRanking={props.setIsRanking}
                     />
                 </div>
-            </div>
-            <div className={"divider"}>
-                <Divider/>
             </div>
         </div>
     );

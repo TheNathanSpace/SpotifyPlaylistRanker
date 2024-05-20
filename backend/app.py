@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 
 import util
+from data_objects.JoinedTrack import JoinedTrack
 from database import Database
 from login import Login
 from spotify_proxy import SpotifyProxy
@@ -20,23 +21,6 @@ LOGIN = Login(DATABASE)
 
 SPOTIFY = SpotifyProxy(DATABASE)
 SPOTIFY.login()
-
-
-@app.route('/check-playlist')
-def checkPlaylist():
-    playlist_uri = request.args.get('playlist_uri')
-    valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
-    return {
-        "playlist_uri": playlist_uri,
-        "valid": valid
-    }
-
-
-@app.route('/playlist-data')
-def playlistData():
-    playlist_uri = request.args.get('playlist_uri')
-    response = SPOTIFY.get_playlist_data(util.to_full_playlist_uri(playlist_uri))
-    return response
 
 
 @app.route('/validate-account')
@@ -93,6 +77,43 @@ def login():
         "valid": is_correct,
         "token": token
     }
+
+
+@app.route('/check-playlist')
+def checkPlaylist():
+    playlist_uri = request.args.get('playlist_uri')
+    valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
+    return {
+        "playlist_uri": playlist_uri,
+        "valid": valid
+    }
+
+
+@app.route('/playlist-data')
+def playlistData():
+    playlist_uri = request.args.get('playlist_uri')
+    response = SPOTIFY.get_playlist_data(util.to_full_playlist_uri(playlist_uri))
+    return response
+
+
+@app.route('/playlist-tracks')
+def playlistTracks():
+    playlist_uri = request.args.get('playlist_uri')
+    response = SPOTIFY.get_playlist_tracks(util.to_full_playlist_uri(playlist_uri))
+    if response:
+        return {
+            "playlist_uri": playlist_uri,
+            "playlist_tracks": [
+                JoinedTrack(track[0], track[1], track[2], track[3], track[4], track[5], track[6]).to_dict()
+                for track in response
+            ],
+            "valid": True
+        }
+    else:
+        return {
+            "playlist_uri": playlist_uri,
+            "valid": False
+        }
 
 
 if __name__ == '__main__':
