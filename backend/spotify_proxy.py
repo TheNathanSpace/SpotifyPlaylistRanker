@@ -6,7 +6,10 @@ import spotipy
 from spotipy import SpotifyClientCredentials, Spotify
 
 import util
+from data_objects.Album import Album
+from data_objects.Artist import Artist
 from data_objects.Playlist import Playlist
+from data_objects.Track import Track
 from data_objects.User import User
 from database import Database
 
@@ -29,18 +32,25 @@ class SpotifyProxy:
         except:
             return False
 
+    def get_first_image(self, item):
+        print(item)
+        if "images" not in item:
+            return None
+
+        if len(item["images"]) > 0:
+            image_url = item["images"][0]["url"]
+            image_bytes = requests.get(image_url).content
+        else:
+            image_bytes = None
+        return image_bytes
+
     def get_user_data(self, user_uri: str):
         cached_user = self.database.get_user(user_uri)
         if not cached_user:
             print(f"User not cached: {user_uri}")
             user = self.spotify.user(user=user_uri)
-
-            if len(user["images"]) > 0:
-                user_image_url = user["images"][0]["url"]
-            else:
-                user_image_url = None
-            user_image_blob = requests.get(user_image_url).content
-            cached_user = User(user_uri, user["display_name"], user_image_blob)
+            user_image_bytes = self.get_first_image(user)
+            cached_user = User(user_uri, user["display_name"], user_image_bytes)
 
         return cached_user
 
@@ -51,16 +61,11 @@ class SpotifyProxy:
             print(f"Playlist not cached: {playlist_uri}")
             playlist = self.spotify.playlist(playlist_id=playlist_uri,
                                              fields="name,description,images,owner.uri,owner.display_name")
-            if len(playlist["images"]) > 0:
-                image_url = playlist["images"][0]["url"]
-            else:
-                image_url = None
-            playlist_image_blob = requests.get(image_url).content
-
+            playlist_image_bytes = self.get_first_image(playlist)
             short_user_uri = util.to_short_uri(playlist["owner"]["uri"])
             cached_user = self.get_user_data(short_user_uri)
 
-            cached_playlist = Playlist(playlist_uri, playlist["name"], playlist_image_blob, playlist["description"],
+            cached_playlist = Playlist(playlist_uri, playlist["name"], playlist_image_bytes, playlist["description"],
                                        short_user_uri)
         else:
             cached_user = self.get_user_data(cached_playlist.owner_uri)
@@ -75,3 +80,88 @@ class SpotifyProxy:
             "profile_username": cached_user.name,
             "profile_image": base64.b64encode(cached_user.user_image).decode('ASCII')
         }
+
+    def get_playlist_tracks(self, playlist_uri: str):
+        # TODO: This should include rankings, as well
+
+        playlist_good = self.check_playlist(playlist_uri)
+        if not playlist_good:
+            return None
+
+        cached_tracks = self.database.get_playlist_tracks(playlist_uri)
+        if not cached_tracks:
+            # 1. Get all playlist tracks from Spotify
+            # 2. Create track, album, artist data objects with downloaded images
+            # 3. Insert tracks, albums, and artists into their respective tables
+            # 4. Link playlist/tracks in playlist_track_xref table
+            # 5. Return the current list of tracks
+
+            print(f"Playlist tracks not cached: {playlist_uri}")
+            results = self.spotify.playlist_items(playlist_id=playlist_uri,
+                                                  fields="href,limit,next,offset,previous,total,items(is_local,track.album.uri,track.album.images,track.album.name,track.artists(uri,name,images),track.name,track.uri)")
+            tracks = results['items']
+            while results['next']:
+                results = self.spotify.next(results)
+                tracks.extend(results['items'])
+
+            """
+            is_local
+            track {
+                name,
+                uri,
+                album {
+                    uri,
+                    images,
+                    name
+                }
+                artists [
+                    uri,
+                    images,
+                    name
+                ]
+            }
+            """
+
+            track_objects = {}
+            album_objects = {}
+            artist_objects = {}
+
+            for track in tracks:
+                track_data = track["track"]
+                if track_data["uri"] in track_objects:
+                    # If the track is already in the dict, then
+                    # we assume the album and artist were added too.
+                    continue
+
+                if track["is_local"]:
+                    # uri and name, at the very least, should be available. We'll add the static
+                    # image when we realize the album is null when sending it to the front-end.
+                    track_object = Track(track_data["uri"], track_data["name"], None, None)
+                    track_objects[track_object.uri] = track_object
+                else:
+                    first_artist = track_data["artists"][0]
+
+                    track_object = Track(track_data["uri"], track_data["name"], track_data["album"]["uri"],
+                                         first_artist["uri"])
+                    track_objects[track_object.uri] = track_object
+
+                    # We don't want to download the same image multiple times, so check
+                    # if it's already in the dict
+                    if track_data["album"]["uri"] not in album_objects:
+                        album_image_bytes = self.get_first_image(track_data["album"])
+                        album_object = Album(track_data["album"]["uri"], track_data["album"]["name"],
+                                             album_image_bytes)
+                        album_objects[album_object.uri] = album_object
+
+                    if first_artist["uri"] not in artist_objects:
+                        artist_image_bytes = self.get_first_image(first_artist)
+                        artist_object = Artist(first_artist["uri"], first_artist["name"],
+                                               artist_image_bytes)
+                        artist_objects[artist_object.uri] = artist_object
+
+            self.database.insert_tracks(list(track_objects.values()),
+                                        list(album_objects.values()),
+                                        list(artist_objects.values()))
+            self.database.link_playlist_tracks(playlist_uri, list(track_objects.keys()))
+            cached_tracks = self.database.get_playlist_tracks(playlist_uri)
+        return cached_tracks

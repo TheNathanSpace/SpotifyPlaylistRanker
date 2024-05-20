@@ -1,21 +1,25 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import PlaylistRankings from "./PlaylistRankings";
+import {useParams} from "wouter";
 
-const ToggleRankingButton = (props) => {
+const LowerPlaylistPage = (props) => {
+    const params = useParams();
+
     return (
-        <>
+        <div className={"hor-centered"}>
             {
                 props.isRanking ?
-                    <span>Interactive track ranking menu</span>
+                    <p>Interactive track ranking menu</p>
                     :
-                    <span>Tracks as ranked by current user</span>
+                    <PlaylistRankings playlist_uri={params.playlist_uri}/>
             }
-        </>
+        </div>
     );
 }
 
-ToggleRankingButton.props = {
-    isRanking: PropTypes.any
+LowerPlaylistPage.props = {
+    isRanking: PropTypes.bool
 }
 
-export default ToggleRankingButton;
+export default LowerPlaylistPage;

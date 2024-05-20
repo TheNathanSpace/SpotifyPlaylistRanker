@@ -42,6 +42,14 @@ code {
     justify-content: center;
 }
 
+.content-width {
+    width: 80%;
+}
+
+.full-width {
+    width: 100%;
+}
+
 .start-button {
     width: 50%;
 }
@@ -95,8 +103,10 @@ code {
 .divider {
     margin-top: 1.5em;
     margin-bottom: 1.5em;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
-.remove-default{
+.remove-default {
     all: unset;
 }

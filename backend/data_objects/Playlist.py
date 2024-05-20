@@ -18,3 +18,9 @@ class Playlist:
             self.owner_uri,
             util.get_one_day_expr()
         )
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Playlist):
+            return self.uri == other.uri
+        return False
