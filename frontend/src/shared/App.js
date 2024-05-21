@@ -17,7 +17,7 @@ function App() {
             <Header/>
             <div className="content">
                 <div className={"hor-centered vert-centered"}>
-                    <div className={"content-width hor-centered vert-centered"}>
+                    <div className={"width-80 hor-centered vert-centered"}>
                         <Switch>
                             <Route path="/">
                                 {/* TODO: If a token exists, only ask for a playlist URL */}
@@ -39,7 +39,7 @@ function App() {
                                             <div className={"divider"}>
                                                 <Divider/>
                                             </div>
-                                            <LowerPlaylistPage isRanking={isRanking}/>
+                                            <LowerPlaylistPage isRanking={isRanking} token={token}/>
                                         </div>
                                         :
                                         <>

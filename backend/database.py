@@ -95,7 +95,7 @@ class Database:
             cursor.execute("INSERT OR REPLACE INTO user VALUES (?, ?, ?, ?);", user.to_tuple())
             cursor.execute("INSERT OR REPLACE INTO playlist VALUES (?, ?, ?, ?, ?, ?);", playlist.to_tuple())
 
-    def get_playlist_tracks(self, playlist_uri: str) -> [()]:
+    def get_playlist_tracks(self, playlist_uri: str, username: str) -> [()]:
         with self.get_db_cursor() as cursor:
             # Check if there are expired tracks in this playlist
             expired_tracks = cursor.execute(
@@ -114,14 +114,15 @@ class Database:
             # If neither of the above are true, then return
             # the current tracks and all other necessary info
             current_tracks_query = """
-            SELECT pt_x.track_uri, al.uri, ar.uri, t.name, al.name, ar.name, pt_x.deleted
+            SELECT pt_x.track_uri, al.uri, ar.uri, t.name, al.name, ar.name, pt_x.deleted, scores.elo, al.album_image
             FROM 	playlist_track_xref pt_x
                     JOIN track t ON pt_x.track_uri = t.uri
                     LEFT JOIN album al ON al.uri = t.album_uri
                     LEFT JOIN artist ar ON ar.uri = t.artist_uri
+                    JOIN scores ON scores.playlist_uri = ? AND scores.track_uri = t.uri AND username = ?
             WHERE pt_x.playlist_uri = ?;"""
 
-            current_tracks = cursor.execute(current_tracks_query, (playlist_uri,)).fetchall()
+            current_tracks = cursor.execute(current_tracks_query, (playlist_uri, username, playlist_uri)).fetchall()
             return current_tracks
 
     def insert_tracks(self, tracks: list[Track], albums: list[Album], artists: list[Artist]):
@@ -141,3 +142,15 @@ class Database:
             expires = util.get_one_day_expr()
             cursor.executemany("INSERT OR REPLACE INTO playlist_track_xref VALUES (?, ?, ?, ?);",
                                [(playlist_uri, track_uri, False, expires) for track_uri in track_uris])
+
+    def set_new_ratings(self, playlist_uri: str, username: str):
+        with self.get_db_cursor() as cursor:
+            set_scores_query = """
+            INSERT INTO scores
+            SELECT ?, ?, track_uri, 1000
+            FROM playlist_track_xref x
+            WHERE x.playlist_uri = ? AND
+                  (?, x.playlist_uri, x.track_uri) NOT IN
+                    (SELECT username, playlist_uri, track_uri FROM scores);
+            """
+            cursor.execute(set_scores_query, (username, playlist_uri, playlist_uri, username))

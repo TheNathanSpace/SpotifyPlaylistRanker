@@ -1,3 +1,4 @@
+import base64
 import re
 import secrets
 import string
@@ -40,3 +41,9 @@ def to_short_uri(long: str) -> str:
 
 def get_one_day_expr() -> float:
     return time.time() + (24 * 60 * 60)
+
+
+def image_bytes_to_b64(content: bytes) -> str:
+    if not content:
+        content = (get_data_dir() / "local_file.png").read_bytes()
+    return base64.b64encode(content).decode('ASCII')

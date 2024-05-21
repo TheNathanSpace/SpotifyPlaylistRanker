@@ -99,12 +99,21 @@ def playlistData():
 @app.route('/playlist-tracks')
 def playlistTracks():
     playlist_uri = request.args.get('playlist_uri')
-    response = SPOTIFY.get_playlist_tracks(util.to_full_playlist_uri(playlist_uri))
+
+    token = request.args.get('token')
+    username = LOGIN.check_user_token(token)
+    if not username:
+        return {
+            "playlist_uri": playlist_uri,
+            "valid": False
+        }
+
+    response = SPOTIFY.get_playlist_tracks(util.to_full_playlist_uri(playlist_uri), username)
     if response:
         return {
             "playlist_uri": playlist_uri,
             "playlist_tracks": [
-                JoinedTrack(track[0], track[1], track[2], track[3], track[4], track[5], track[6]).to_dict()
+                JoinedTrack(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7], track[8]).to_dict()
                 for track in response
             ],
             "valid": True

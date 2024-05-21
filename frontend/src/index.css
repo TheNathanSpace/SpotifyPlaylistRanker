@@ -14,6 +14,7 @@ code {
 
 .content {
     margin: 1em;
+    margin-bottom: 2em;
 }
 
 .content * {
@@ -42,8 +43,12 @@ code {
     justify-content: center;
 }
 
-.content-width {
+.width-80 {
     width: 80%;
+}
+
+.width-60 {
+    width: 60%;
 }
 
 .full-width {
@@ -109,4 +114,21 @@ code {
 
 .remove-default {
     all: unset;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.grid-album-image {
+    height: 3em;
+}
+
+.grid-deleted-checkbox {
+    transform: scale(1.5);
+}
+
+.ag-theme-quartz {
+    --ag-row-height: 3em !important;
+    --ag-font-size: 18px !important;
 }
