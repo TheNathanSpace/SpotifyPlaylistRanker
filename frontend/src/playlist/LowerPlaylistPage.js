@@ -12,14 +12,15 @@ const LowerPlaylistPage = (props) => {
                 props.isRanking ?
                     <p>Interactive track ranking menu</p>
                     :
-                    <PlaylistRankings playlist_uri={params.playlist_uri}/>
+                    <PlaylistRankings playlist_uri={params.playlist_uri} token={props.token}/>
             }
         </div>
     );
 }
 
 LowerPlaylistPage.props = {
-    isRanking: PropTypes.bool
+    isRanking: PropTypes.bool,
+    token: PropTypes.any
 }
 
 export default LowerPlaylistPage;

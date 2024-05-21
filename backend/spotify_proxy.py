@@ -33,7 +33,6 @@ class SpotifyProxy:
             return False
 
     def get_first_image(self, item):
-        print(item)
         if "images" not in item:
             return None
 
@@ -75,26 +74,25 @@ class SpotifyProxy:
         return {
             "playlist_name": cached_playlist.name,
             "playlist_description": cached_playlist.description,
-            "playlist_image": base64.b64encode(cached_playlist.image).decode('ASCII'),
+            "playlist_image": util.image_bytes_to_b64(cached_playlist.image),
             "profile_uri": cached_user.uri,
             "profile_username": cached_user.name,
-            "profile_image": base64.b64encode(cached_user.user_image).decode('ASCII')
+            "profile_image": util.image_bytes_to_b64(cached_user.user_image)
         }
 
-    def get_playlist_tracks(self, playlist_uri: str):
-        # TODO: This should include rankings, as well
-
+    def get_playlist_tracks(self, playlist_uri: str, username: str):
         playlist_good = self.check_playlist(playlist_uri)
         if not playlist_good:
             return None
 
-        cached_tracks = self.database.get_playlist_tracks(playlist_uri)
+        cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
         if not cached_tracks:
             # 1. Get all playlist tracks from Spotify
             # 2. Create track, album, artist data objects with downloaded images
             # 3. Insert tracks, albums, and artists into their respective tables
             # 4. Link playlist/tracks in playlist_track_xref table
-            # 5. Return the current list of tracks
+            # 5. Set Elo rating for all new tracks
+            # 6. Return the current list of tracks
 
             print(f"Playlist tracks not cached: {playlist_uri}")
             results = self.spotify.playlist_items(playlist_id=playlist_uri,
@@ -163,5 +161,6 @@ class SpotifyProxy:
                                         list(album_objects.values()),
                                         list(artist_objects.values()))
             self.database.link_playlist_tracks(playlist_uri, list(track_objects.keys()))
-            cached_tracks = self.database.get_playlist_tracks(playlist_uri)
+            self.database.set_new_ratings(playlist_uri, username)
+            cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
         return cached_tracks
