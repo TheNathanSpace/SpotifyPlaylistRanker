@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import greyImage from "../images/grey.png"
-import {Divider} from "@mui/joy";
 import {useParams} from "wouter";
 import {GET_PLAYLIST_DATA} from "../util/addresses";
 import PropTypes from "prop-types";
 import ToggleRankingButton from "./ToggleRankingButton";
+import {toShortURI} from "../util/util";
 
 const PlaylistPage = (props) => {
     const params = useParams();
@@ -29,6 +29,7 @@ const PlaylistPage = (props) => {
         // This is so dumb https://stackoverflow.com/a/64079172/7492795
         (async () => {
             const urlParams = {
+                token: props.token,
                 playlist_uri: params.playlist_uri
             }
             const target = GET_PLAYLIST_DATA + "?" + new URLSearchParams(urlParams).toString();
@@ -68,7 +69,7 @@ const PlaylistPage = (props) => {
         return "https://open.spotify.com/playlist/" + params.playlist_uri;
     }
     const getProfileURL = () => {
-        return "https://open.spotify.com/user/" + playlistData.profile_uri
+        return "https://open.spotify.com/user/" + toShortURI(playlistData.profile_uri);
     }
 
     /*
@@ -137,6 +138,7 @@ const PlaylistPage = (props) => {
 
 PlaylistPage.props = {
     setIsRanking: PropTypes.any,
+    token: PropTypes.string
 }
 
 export default PlaylistPage;

@@ -1,14 +1,18 @@
 import math
+import time
+
+from database import Database
 
 
 class EloRatingSystem:
-    def __init__(self, k_factor=32):
+    def __init__(self, database: Database, k_factor=32):
+        self.database = database
         self.k_factor = k_factor
 
     def expected_score(self, rating_a: float, rating_b: float):
         return 1 / (1 + math.pow(10, (rating_b - rating_a) / 400))
 
-    def update_ratings(self, rating_a: float, rating_b: float, a_wins: bool):
+    def get_new_ratings(self, rating_a: float, rating_b: float, a_wins: bool) -> (float, float):
         expected_a = self.expected_score(rating_a, rating_b)
         expected_b = 1 - expected_a
 
@@ -19,3 +23,16 @@ class EloRatingSystem:
         new_rating_b = rating_b + self.k_factor * (actual_b - expected_b)
 
         return new_rating_a, new_rating_b
+
+    def update_ratings(self, playlist_uri: str, username: str, track_a_uri: str, track_b_uri: str, a_wins: bool):
+        rating_a = self.database.get_rating(playlist_uri, username, track_a_uri)
+        rating_b = self.database.get_rating(playlist_uri, username, track_b_uri)
+
+        new_rating_a, new_rating_b = self.get_new_ratings(rating_a, rating_b, a_wins)
+        self.database.update_rating(playlist_uri, username, track_a_uri, new_rating_a)
+        self.database.update_rating(playlist_uri, username, track_b_uri, new_rating_b)
+
+        self.database.insert_win(playlist_uri, username, track_a_uri, track_b_uri, 0 if a_wins else 1, time.time())
+
+    def reset_rankings(self, playlist_uri: str, username: str):
+        self.database.reset_rankings(playlist_uri, username)
