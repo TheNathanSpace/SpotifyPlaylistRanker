@@ -3,7 +3,7 @@ import {useLocation} from "wouter";
 import {Alert, Button, FormControl, FormHelperText, FormLabel, Input, Stack} from "@mui/joy";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import {useTheme} from "@mui/material";
-import {SPOTIFY_PLAYLIST_PATTERN} from "../util/constants"
+import {SPOTIFY_PLAYLIST_PATTERN} from "../util/util"
 import {CHECK_PLAYLIST, LOGIN} from "../util/addresses";
 import PropTypes from "prop-types";
 

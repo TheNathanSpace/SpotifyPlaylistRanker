@@ -35,7 +35,7 @@ function App() {
                                     token
                                         ?
                                         <div className={"full-width"}>
-                                            <PlaylistInfo setIsRanking={setIsRanking}/>
+                                            <PlaylistInfo setIsRanking={setIsRanking} token={token}/>
                                             <div className={"divider"}>
                                                 <Divider/>
                                             </div>

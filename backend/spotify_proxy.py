@@ -47,7 +47,7 @@ class SpotifyProxy:
         cached_user = self.database.get_user(user_uri)
         if not cached_user:
             print(f"User not cached: {user_uri}")
-            user = self.spotify.user(user=user_uri)
+            user = self.spotify.user(user=util.to_short_uri(user_uri))
             user_image_bytes = self.get_first_image(user)
             cached_user = User(user_uri, user["display_name"], user_image_bytes)
 
@@ -61,11 +61,10 @@ class SpotifyProxy:
             playlist = self.spotify.playlist(playlist_id=playlist_uri,
                                              fields="name,description,images,owner.uri,owner.display_name")
             playlist_image_bytes = self.get_first_image(playlist)
-            short_user_uri = util.to_short_uri(playlist["owner"]["uri"])
-            cached_user = self.get_user_data(short_user_uri)
+            cached_user = self.get_user_data(playlist["owner"]["uri"])
 
             cached_playlist = Playlist(playlist_uri, playlist["name"], playlist_image_bytes, playlist["description"],
-                                       short_user_uri)
+                                       playlist["owner"]["uri"])
         else:
             cached_user = self.get_user_data(cached_playlist.owner_uri)
 
@@ -81,10 +80,6 @@ class SpotifyProxy:
         }
 
     def get_playlist_tracks(self, playlist_uri: str, username: str):
-        playlist_good = self.check_playlist(playlist_uri)
-        if not playlist_good:
-            return None
-
         cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
         if not cached_tracks:
             # 1. Get all playlist tracks from Spotify
@@ -164,3 +159,7 @@ class SpotifyProxy:
             self.database.set_new_ratings(playlist_uri, username)
             cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
         return cached_tracks
+
+    def get_ranking_options(self, playlist_uri: str, username: str):
+        options = self.database.get_random_options(playlist_uri, username)
+        return list(options)

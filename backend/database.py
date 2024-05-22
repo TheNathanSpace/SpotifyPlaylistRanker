@@ -154,3 +154,55 @@ class Database:
                     (SELECT username, playlist_uri, track_uri FROM scores);
             """
             cursor.execute(set_scores_query, (username, playlist_uri, playlist_uri, username))
+
+    def get_random_options(self, playlist_uri: str, username: str):
+        with self.get_db_cursor() as cursor:
+            random_options_query = """
+            SELECT al.uri, al.name, al.album_image, t.uri, t.name, ar.uri, ar.name, ar.artist_image
+            FROM playlist_track_xref x
+            JOIN track t ON t.uri = x.track_uri
+            JOIN album al ON al.uri = t.album_uri
+            JOIN artist ar ON ar.uri = t.artist_uri
+            WHERE x.deleted = 0 AND x.playlist_uri = ?
+            ORDER BY RANDOM() LIMIT 2;
+            """
+            results = cursor.execute(random_options_query, (playlist_uri,)).fetchall()
+            return results
+
+    def get_rating(self, playlist_uri: str, username: str, track_uri: str):
+        with self.get_db_cursor() as cursor:
+            rating_query = """
+            SELECT elo
+            FROM scores
+            WHERE username = ? AND playlist_uri = ? and track_uri = ?;
+            """
+            results = cursor.execute(rating_query, (username, playlist_uri, track_uri)).fetchone()
+            return results[0]
+
+    def update_rating(self, playlist_uri: str, username: str, track_uri: str, new_rating: float):
+        with self.get_db_cursor() as cursor:
+            update_rating_query = """
+            UPDATE scores
+            SET elo = ?
+            WHERE username = ? AND playlist_uri = ? AND track_uri = ?;
+            """
+            cursor.execute(update_rating_query, (new_rating, username, playlist_uri, track_uri)).fetchone()
+
+    def insert_win(self, playlist_uri: str, username: str, track_a_uri: str, track_b_uri: str, winner: int,
+                   timestamp: float):
+        with self.get_db_cursor() as cursor:
+            insert_win_query = """
+            INSERT INTO wins
+            VALUES (?, ?, ?, ?, ?, ?);
+            """
+            cursor.execute(insert_win_query,
+                           (username, playlist_uri, track_a_uri, track_b_uri, winner, timestamp)).fetchone()
+
+    def reset_rankings(self, playlist_uri: str, username: str):
+        with self.get_db_cursor() as cursor:
+            reset_rankings_query = """
+            UPDATE scores
+            SET elo = 1000
+            WHERE username = ? AND playlist_uri = ?;
+            """
+            cursor.execute(reset_rankings_query, (username, playlist_uri))

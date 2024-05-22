@@ -56,7 +56,7 @@ const RankingsGrid = (props) => {
             {headerName: "Track", valueGetter: t => t.data.track_name, flex: 2},
             {headerName: "Album", valueGetter: t => t.data.album_name, flex: 2},
             {headerName: "Artist", valueGetter: t => t.data.artist_name, flex: 1.5},
-            {headerName: "Ranking", valueGetter: t => t.data.elo, flex: 1},
+            {headerName: "Ranking", valueGetter: t => Math.round(t.data.elo), flex: 1},
             {
                 headerName: "Deleted", valueGetter: t => t.data, cellRenderer: GridCheckbox, flex: 0.5
             },

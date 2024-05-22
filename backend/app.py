@@ -5,7 +5,9 @@ from flask_cors import CORS
 
 import util
 from data_objects.JoinedTrack import JoinedTrack
+from data_objects.RankingOption import RankingOption
 from database import Database
+from elo_rating import EloRatingSystem
 from login import Login
 from spotify_proxy import SpotifyProxy
 
@@ -21,6 +23,43 @@ LOGIN = Login(DATABASE)
 
 SPOTIFY = SpotifyProxy(DATABASE)
 SPOTIFY.login()
+
+ELO_SYSTEM = EloRatingSystem(DATABASE)
+
+
+def check_token_and_playlist(args):
+    token = args.get('token')
+    username = None
+    playlist_uri = None
+
+    if token:
+        username = LOGIN.check_user_token(token)
+        if not username:
+            return None, None, {
+                "valid": False,
+                "error": f"Invalid token {token}"
+            }
+    else:
+        return None, None, {
+            "valid": False,
+            "error": f"Missing token"
+        }
+
+    playlist_uri = args.get('playlist_uri')
+    if playlist_uri:
+        playlist_valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
+        if not playlist_valid:
+            return None, None, {
+                "valid": False,
+                "error": f"Invalid playlist {playlist_uri}"
+            }
+    else:
+        return None, None, {
+            "valid": False,
+            "error": f"Missing playlist"
+        }
+
+    return username, playlist_uri, None
 
 
 @app.route('/validate-account')
@@ -84,36 +123,57 @@ def checkPlaylist():
     playlist_uri = request.args.get('playlist_uri')
     valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
     return {
-        "playlist_uri": playlist_uri,
-        "valid": valid
+        "valid": valid,
+        "playlist_uri": playlist_uri
     }
 
 
 @app.route('/playlist-data')
 def playlistData():
-    playlist_uri = request.args.get('playlist_uri')
+    username, playlist_uri, error = check_token_and_playlist(request.args)
+    if error:
+        return error
+
     response = SPOTIFY.get_playlist_data(util.to_full_playlist_uri(playlist_uri))
     return response
 
 
 @app.route('/playlist-tracks')
 def playlistTracks():
-    playlist_uri = request.args.get('playlist_uri')
-
-    token = request.args.get('token')
-    username = LOGIN.check_user_token(token)
-    if not username:
-        return {
-            "playlist_uri": playlist_uri,
-            "valid": False
-        }
+    username, playlist_uri, error = check_token_and_playlist(request.args)
+    if error:
+        return error
 
     response = SPOTIFY.get_playlist_tracks(util.to_full_playlist_uri(playlist_uri), username)
     if response:
         return {
             "playlist_uri": playlist_uri,
             "playlist_tracks": [
-                JoinedTrack(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7], track[8]).to_dict()
+                JoinedTrack(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7],
+                            track[8]).to_dict()
+                for track in response
+            ],
+            "valid": True
+        }
+    else:
+        return {
+            "valid": False,
+            "error": f"Unknown error"
+        }
+
+
+@app.route('/ranking-options')
+def rankingOptions():
+    username, playlist_uri, error = check_token_and_playlist(request.args)
+    if error:
+        return error
+
+    response = SPOTIFY.get_ranking_options(util.to_full_playlist_uri(playlist_uri), username)
+    if response:
+        return {
+            "playlist_uri": playlist_uri,
+            "options": [
+                RankingOption(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7]).to_dict()
                 for track in response
             ],
             "valid": True
@@ -123,6 +183,39 @@ def playlistTracks():
             "playlist_uri": playlist_uri,
             "valid": False
         }
+
+
+# TODO: fix these endpoints to use POST and stuff instead of all GET
+@app.route('/submit-ranking')
+def submitRanking():
+    username, playlist_uri, error = check_token_and_playlist(request.args)
+    if error:
+        return error
+
+    track_a_uri = request.args.get("track_a_uri")
+    track_b_uri = request.args.get("track_b_uri")
+    a_wins = request.args.get("a_wins")
+
+    a_wins = a_wins == "true"
+
+    ELO_SYSTEM.update_ratings(util.to_full_playlist_uri(playlist_uri), username, track_a_uri, track_b_uri, a_wins)
+    return {
+        "playlist_uri": playlist_uri,
+        "valid": False
+    }
+
+
+@app.route('/reset-rankings')
+def resetRankings():
+    username, playlist_uri, error = check_token_and_playlist(request.args)
+    if error:
+        return error
+
+    ELO_SYSTEM.reset_rankings(util.to_full_playlist_uri(playlist_uri), username)
+    return {
+        "playlist_uri": playlist_uri,
+        "valid": False
+    }
 
 
 if __name__ == '__main__':
