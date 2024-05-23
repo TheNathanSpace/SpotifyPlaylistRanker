@@ -158,10 +158,11 @@ class SpotifyProxy:
             artist_list = list(artist_objects.keys())
             current_index = 0
             artists_data = []
+            max_artists = 50  # Spotify claims 100 but throws 400 - too many IDs error for >50
             while current_index < len(artist_list):
-                response = self.spotify.artists(artist_list[current_index: current_index + 100])
+                response = self.spotify.artists(artist_list[current_index: current_index + max_artists])
                 artists_data.extend(response["artists"])
-                current_index += 100
+                current_index += max_artists
 
             for data in artists_data:
                 artist_uri = data["uri"]
