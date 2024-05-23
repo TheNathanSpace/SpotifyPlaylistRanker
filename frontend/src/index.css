@@ -181,6 +181,15 @@ code {
 
 .ranking-artist-name {
     margin-left: 1em;
+    font-size: 1.15em;
+}
+
+.ranking-option-track-name {
+    font-size: 1.3em;
+}
+
+.ranking-option-album-name {
+    font-size: 1.25em;
 }
 
 .ranking-option-row {
@@ -193,4 +202,8 @@ code {
 
 .reset-rankings-button {
     width: 20em;
+}
+
+.audio-preview {
+    margin-top: 2em;
 }

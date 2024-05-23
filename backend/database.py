@@ -131,7 +131,7 @@ class Database:
                                [album.to_tuple() for album in albums])
             cursor.executemany("INSERT OR REPLACE INTO artist VALUES (?, ?, ?);",
                                [artist.to_tuple() for artist in artists])
-            cursor.executemany("INSERT OR REPLACE INTO track VALUES (?, ?, ?, ?);",
+            cursor.executemany("INSERT OR REPLACE INTO track VALUES (?, ?, ?, ?, ?);",
                                [track.to_tuple() for track in tracks])
 
     def link_playlist_tracks(self, playlist_uri: str, track_uris: list[str]):
@@ -155,10 +155,10 @@ class Database:
             """
             cursor.execute(set_scores_query, (username, playlist_uri, playlist_uri, username))
 
-    def get_random_options(self, playlist_uri: str, username: str):
+    def get_random_options(self, playlist_uri: str):
         with self.get_db_cursor() as cursor:
             random_options_query = """
-            SELECT al.uri, al.name, al.album_image, t.uri, t.name, ar.uri, ar.name, ar.artist_image
+            SELECT al.uri, al.name, al.album_image, t.uri, t.name, ar.uri, ar.name, ar.artist_image, t.audio_preview_url
             FROM playlist_track_xref x
             JOIN track t ON t.uri = x.track_uri
             JOIN album al ON al.uri = t.album_uri

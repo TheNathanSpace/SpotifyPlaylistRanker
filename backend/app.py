@@ -173,7 +173,8 @@ def rankingOptions():
         return {
             "playlist_uri": playlist_uri,
             "options": [
-                RankingOption(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7]).to_dict()
+                RankingOption(track[0], track[1], track[2], track[3], track[4], track[5], track[6], track[7],
+                              track[8]).to_dict()
                 for track in response
             ],
             "valid": True

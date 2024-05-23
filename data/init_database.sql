@@ -33,10 +33,11 @@ CREATE TABLE IF NOT EXISTS artist
 
 CREATE TABLE IF NOT EXISTS track
 (
-    uri        TEXT PRIMARY KEY,
-    name       TEXT,
-    album_uri  TEXT,
-    artist_uri TEXT,
+    uri               TEXT PRIMARY KEY,
+    name              TEXT,
+    album_uri         TEXT,
+    artist_uri        TEXT,
+    audio_preview_url TEXT,
     FOREIGN KEY (album_uri) REFERENCES album (uri),
     FOREIGN KEY (artist_uri) REFERENCES artist (uri)
 );
