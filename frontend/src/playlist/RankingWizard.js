@@ -46,11 +46,11 @@ const RankingWizard = (props) => {
             promiseMap.set(t.album_uri, fetchURLImage(t.album_uri, `data:image/png;base64,${t.album_image_b64}`));
             promiseMap.set(t.artist_uri, fetchURLImage(t.artist_uri, `data:image/png;base64,${t.artist_image_b64}`));
         });
-        const imageMap = new Map();
+        const newImageMap = new Map();
         await Promise.allSettled(promiseMap.values()).then(async (promiseResults) => {
-            promiseResults.forEach(r => imageMap.set(r.value.uri, r.value.image_url));
+            promiseResults.forEach(r => newImageMap.set(r.value.uri, r.value.image_url));
         });
-        return imageMap;
+        return newImageMap;
     }
 
     useEffect(() => {
@@ -60,8 +60,8 @@ const RankingWizard = (props) => {
         }
 
         (async () => {
-            const imageMap = await base64ToBlobURL(options);
-            setImageMap(imageMap);
+            const newImageMap = await base64ToBlobURL(options);
+            setImageMap(newImageMap);
         })();
     }, [options]);
 

@@ -152,6 +152,19 @@ class SpotifyProxy:
                                                artist_image_bytes)
                         artist_objects[artist_object.uri] = artist_object
 
+            artist_list = list(artist_objects.keys())
+            current_index = 0
+            artists_data = []
+            while current_index < len(artist_list):
+                response = self.spotify.artists(artist_list[current_index: current_index + 100])
+                artists_data.extend(response["artists"])
+                current_index += 100
+
+            for data in artists_data:
+                artist_uri = data["uri"]
+                artist_image_bytes = self.get_first_image(data)
+                artist_objects[artist_uri].artist_image = artist_image_bytes
+
             self.database.insert_tracks(list(track_objects.values()),
                                         list(album_objects.values()),
                                         list(artist_objects.values()))

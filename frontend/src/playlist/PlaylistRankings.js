@@ -8,6 +8,7 @@ import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 const PlaylistRankings = (props) => {
     const [playlistTracks, setPlaylistTracks] = useState([]);
 
+    // TODO: display note for when tracks are still being cached from Spotify
     const loadPlaylistTracks = async () => {
         const urlParams = {
             playlist_uri: props.playlist_uri,
