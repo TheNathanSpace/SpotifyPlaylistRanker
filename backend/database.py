@@ -206,3 +206,9 @@ class Database:
             WHERE username = ? AND playlist_uri = ?;
             """
             cursor.execute(reset_rankings_query, (username, playlist_uri))
+
+            clear_wins_query = """
+            DELETE FROM wins
+            WHERE username = ? AND playlist_uri = ?;
+            """
+            cursor.execute(clear_wins_query, (username, playlist_uri))
