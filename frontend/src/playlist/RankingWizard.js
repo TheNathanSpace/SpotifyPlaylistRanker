@@ -1,8 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import PropTypes from "prop-types";
 import {GET_RANKING_OPTIONS, SUBMIT_RANKING} from "../util/addresses";
+import RankingOption from "./RankingOption";
 
 const RankingWizard = (props) => {
+
+    const [previewVolume, setPreviewVolume] = useState(0.5);
 
     const [options, setOptions] = useState([
         {
@@ -11,6 +14,7 @@ const RankingWizard = (props) => {
             album_image_b64: null,
             track_uri: null,
             track_name: null,
+            audio_preview_url: null,
             artist_uri: null,
             artist_name: null,
             artist_image_b64: null,
@@ -21,6 +25,7 @@ const RankingWizard = (props) => {
             album_image_b64: null,
             track_uri: null,
             track_name: null,
+            audio_preview_url: null,
             artist_uri: null,
             artist_name: null,
             artist_image_b64: null,
@@ -100,34 +105,30 @@ const RankingWizard = (props) => {
         await fetch(target);
     };
 
-    const selectOption = async (optionIndex) => {
+    const selectOption = async (chosenTrackURI) => {
         if (blockClicking.current) {
             return;
         }
         blockClicking.current = true;
         setOptionsClickable(false);
-        submitWin(optionIndex);
+
+        let chosenIndex;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.track_uri === chosenTrackURI) {
+                chosenIndex = i;
+                break;
+            }
+        }
+        submitWin(chosenIndex);
         await getOptions();
     };
 
     return (
         <div className={"hor-centered ranking-wizard"}>
 
-            <div className={"ranking-option" + (optionsClickable ? " clickable" : "")}
-                 onClick={() => selectOption(0)}>
-                <div>
-                    <img className={"ranking-image"} src={imageMap.get(options[0].album_uri)}
-                         alt={"Option 1 cover"}/>
-                </div>
-                <span className={"ranking-option-row hor-centered-text"}>{options[0].track_name}</span>
-                <div className={"hor-centered vert-centered ranking-option-row"}>
-                    <img className={"ranking-artist-image"} src={imageMap.get(options[0].artist_uri)}
-                         alt={"Option 1 artist"}/>
-                    <span className={"ranking-artist-name"}>{options[0].artist_name}</span>
-                </div>
-                <span className={"ranking-option-row hor-centered-text"}>{options[0].album_name}</span>
-                {!optionsClickable ? <div className={"grey-overlay"}/> : <></>}
-            </div>
+            <RankingOption optionsClickable={optionsClickable} selectOption={selectOption} imageMap={imageMap}
+                           optionData={options[0]} previewVolume={previewVolume} setPreviewVolume={setPreviewVolume}/>
 
             <div className={"vert-centered"}>
                 <div className={"ranking-instruction hor-centered-text"}>
@@ -135,19 +136,8 @@ const RankingWizard = (props) => {
                 </div>
             </div>
 
-            <div className={"ranking-option" + (optionsClickable ? " clickable" : "")} onClick={() => selectOption(1)}>
-                <div>
-                    <img className={"ranking-image"} src={imageMap.get(options[1].album_uri)} alt={"Option 1 cover"}/>
-                </div>
-                <span className={"ranking-option-row hor-centered-text"}>{options[1].track_name}</span>
-                <div className={"hor-centered vert-centered ranking-option-row"}>
-                    <img className={"ranking-artist-image"} src={imageMap.get(options[1].artist_uri)}
-                         alt={"Option 1 artist"}/>
-                    <span className={"ranking-artist-name"}>{options[1].artist_name}</span>
-                </div>
-                <span className={"ranking-option-row hor-centered-text"}>{options[1].album_name}</span>
-                {!optionsClickable ? <div className={"grey-overlay"}/> : <></>}
-            </div>
+            <RankingOption optionsClickable={optionsClickable} selectOption={selectOption} imageMap={imageMap}
+                           optionData={options[1]} previewVolume={previewVolume} setPreviewVolume={setPreviewVolume}/>
         </div>
     );
 };

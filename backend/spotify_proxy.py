@@ -91,7 +91,7 @@ class SpotifyProxy:
 
             print(f"Playlist tracks not cached: {playlist_uri}")
             results = self.spotify.playlist_items(playlist_id=playlist_uri,
-                                                  fields="href,limit,next,offset,previous,total,items(is_local,track.album.uri,track.album.images,track.album.name,track.artists(uri,name,images),track.name,track.uri)")
+                                                  fields="href,limit,next,offset,previous,total,items(is_local,track.album.uri,track.album.images,track.album.name,track.artists(uri,name,images),track.name,track.uri,track.preview_url)")
             tracks = results['items']
             while results['next']:
                 results = self.spotify.next(results)
@@ -119,6 +119,7 @@ class SpotifyProxy:
             album_objects = {}
             artist_objects = {}
 
+            print("Start tracks")
             for track in tracks:
                 track_data = track["track"]
                 if track_data["uri"] in track_objects:
@@ -129,13 +130,13 @@ class SpotifyProxy:
                 if track["is_local"]:
                     # uri and name, at the very least, should be available. We'll add the static
                     # image when we realize the album is null when sending it to the front-end.
-                    track_object = Track(track_data["uri"], track_data["name"], None, None)
+                    track_object = Track(track_data["uri"], track_data["name"], None, None, None)
                     track_objects[track_object.uri] = track_object
                 else:
                     first_artist = track_data["artists"][0]
 
                     track_object = Track(track_data["uri"], track_data["name"], track_data["album"]["uri"],
-                                         first_artist["uri"])
+                                         first_artist["uri"], track_data["preview_url"])
                     track_objects[track_object.uri] = track_object
 
                     # We don't want to download the same image multiple times, so check
@@ -151,7 +152,9 @@ class SpotifyProxy:
                         artist_object = Artist(first_artist["uri"], first_artist["name"],
                                                artist_image_bytes)
                         artist_objects[artist_object.uri] = artist_object
+            print("End tracks")
 
+            print("Start artists")
             artist_list = list(artist_objects.keys())
             current_index = 0
             artists_data = []
@@ -164,15 +167,18 @@ class SpotifyProxy:
                 artist_uri = data["uri"]
                 artist_image_bytes = self.get_first_image(data)
                 artist_objects[artist_uri].artist_image = artist_image_bytes
+            print("End artists")
 
+            print("Start DB")
             self.database.insert_tracks(list(track_objects.values()),
                                         list(album_objects.values()),
                                         list(artist_objects.values()))
             self.database.link_playlist_tracks(playlist_uri, list(track_objects.keys()))
             self.database.set_new_ratings(playlist_uri, username)
             cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
+            print("End DB")
         return cached_tracks
 
     def get_ranking_options(self, playlist_uri: str, username: str):
-        options = self.database.get_random_options(playlist_uri, username)
+        options = self.database.get_random_options(playlist_uri)
         return list(options)
