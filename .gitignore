@@ -78,6 +78,6 @@ fabric.properties
 
 **/__pycache__/**
 data/database.db
-data/secret.env
+.env
 backend/.cache
 .idea/dataSources.xml

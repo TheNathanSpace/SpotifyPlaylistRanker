@@ -1,3 +1,6 @@
+import logging
+import os
+
 from dotenv import load_dotenv
 from flask import Flask, request
 
@@ -11,7 +14,7 @@ from elo_rating import EloRatingSystem
 from login import Login
 from spotify_proxy import SpotifyProxy
 
-load_dotenv(dotenv_path=util.init_env())
+load_dotenv(dotenv_path=util.get_env_path())
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -220,4 +223,9 @@ def resetRankings():
 
 
 if __name__ == '__main__':
-    app.run()
+    port = os.environ["backend_port"]
+    if not port:
+        logging.error("Config value backend_port is blank. Set in .env. Exiting.")
+        exit(-1)
+
+    app.run(port=port)

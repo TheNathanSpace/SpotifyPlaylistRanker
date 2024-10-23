@@ -1,8 +1,12 @@
+import random
+import string
 import time
 from typing import Tuple
 import os
 import hashlib
 import hmac
+
+import dotenv
 import jwt
 from dotenv import load_dotenv
 
@@ -19,6 +23,9 @@ class Login:
         self.database = database
         load_dotenv(dotenv_path=(util.get_env_path()))
         self.jwt_secret_key = os.environ["jwt_secret_key"]
+        if not self.jwt_secret_key:
+            self.jwt_secret_key = ''.join(random.choices(string.ascii_letters + string.digits, k=128))
+            dotenv.set_key(util.get_env_path(), "jwt_secret_key", self.jwt_secret_key)
 
     def hash_new_password(self, password: str) -> Tuple[bytes, bytes]:
         """

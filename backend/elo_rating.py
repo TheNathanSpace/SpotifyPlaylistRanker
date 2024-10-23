@@ -1,13 +1,20 @@
 import math
+import os
 import time
 
+import dotenv
+
+import util
 from database import Database
 
 
 class EloRatingSystem:
-    def __init__(self, database: Database, k_factor=32):
+    def __init__(self, database: Database, k_factor: int = None):
         self.database = database
-        self.k_factor = k_factor
+        self.k_factor = os.environ["elo_k_factor"]
+        if not self.k_factor:
+            self.k_factor = 64
+            dotenv.set_key(util.get_env_path(), "elo_k_factor", str(self.k_factor))
 
     def expected_score(self, rating_a: float, rating_b: float):
         return 1 / (1 + math.pow(10, (rating_b - rating_a) / 400))
