@@ -7,7 +7,7 @@ import GridImage from "./GridImage";
 import GridCheckbox from "./GridCheckbox";
 
 const RankingsGrid = (props) => {
-    const [imageMap, setImageMap] = useState()
+    const [imageMap, setImageMap] = useState(new Map());
     const [colDefs, setColDefs] = useState([]);
     const imageMapFirstRender = useRef(true);
     const playlistTracksFirstRender = useRef(true);
