@@ -141,6 +141,7 @@ const LoginPage = (props) => {
                         placeholder="Password"
                         size="lg"
                         variant="outlined"
+                        type="password"
                         onChange={(event) => passwordValue.current = event.target.value}
                     />
                 </FormControl>

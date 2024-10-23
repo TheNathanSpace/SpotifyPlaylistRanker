@@ -6,10 +6,21 @@ import {Button} from "@mui/joy";
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 
 const PlaylistRankings = (props) => {
+    // The list of user ranked tracks, retrieved from back-end
     const [playlistTracks, setPlaylistTracks] = useState([]);
 
-    // TODO: display note for when tracks are still being cached from Spotify
+    // Whether we are waiting for tracks to appear on the page
+    const [waitingForTracks, setWaitingForTracks] = useState(true);
+
+    // Whether there was an error getting the tracks
+    const [errored, setErrored] = useState(false);
+
+    // Whether the user has clicked the reset button once already
+    const [tryReset, setTryReset] = useState(false);
+
     const loadPlaylistTracks = async () => {
+        setWaitingForTracks(true);
+
         const urlParams = {
             playlist_uri: props.playlist_uri,
             token: props.token
@@ -17,8 +28,11 @@ const PlaylistRankings = (props) => {
         const target = GET_PLAYLIST_TRACKS + "?" + new URLSearchParams(urlParams).toString();
         const response = await (await fetch(target)).json();
 
+        setWaitingForTracks(false);
         if (response.valid) {
             setPlaylistTracks(response.playlist_tracks.sort(sortTracks));
+        } else {
+            setErrored(true);
         }
     };
 
@@ -37,6 +51,13 @@ const PlaylistRankings = (props) => {
     }
 
     const resetRankings = async () => {
+        if (!tryReset) {
+            setTryReset(true);
+            return;
+        }
+
+        setTryReset(false);
+
         const urlParams = {
             playlist_uri: props.playlist_uri,
             token: props.token
@@ -55,13 +76,13 @@ const PlaylistRankings = (props) => {
                 <Button
                     className={"reset-rankings-button"}
                     color="danger"
-                    variant="outlined"
+                    variant={!tryReset ? "outlined" : "solid"}
                     size="lg"
                     onClick={() => {
                         resetRankings()
                     }}
                 >
-                    <WarningAmberOutlinedIcon/>&nbsp;&nbsp;Reset track rankings&nbsp;&nbsp;<WarningAmberOutlinedIcon/>
+                    <WarningAmberOutlinedIcon/>&nbsp;&nbsp;{ !tryReset ? "Reset track rankings" : "CONFIRM?" }&nbsp;&nbsp;<WarningAmberOutlinedIcon/>
                 </Button>
             </div>
         </div>

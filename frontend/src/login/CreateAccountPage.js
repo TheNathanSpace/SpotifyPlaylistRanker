@@ -113,6 +113,7 @@ const CreateAccountPage = (props) => {
                         placeholder="Password"
                         size="lg"
                         variant="outlined"
+                        type="password"
                         onChange={(event) => passwordValue.current = event.target.value}
                     />
                     {
@@ -132,6 +133,7 @@ const CreateAccountPage = (props) => {
                         placeholder="Password"
                         size="lg"
                         variant="outlined"
+                        type="password"
                         onChange={(event) => passwordRepeatValue.current = event.target.value}
                     />
                     {
