@@ -3,6 +3,7 @@ version: '3'
 services:
   spotify_ranker:
     image: spotify_ranker
+    container_name: spotify_ranker
     ports:
       - ${REACT_APP_PORT}:${REACT_APP_PORT}
     volumes:
