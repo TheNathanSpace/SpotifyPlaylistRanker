@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  backend:
+  spotify_ranker:
     image: spotify_ranker
     ports:
       - ${REACT_APP_PORT}:${REACT_APP_PORT}
     volumes:
-      - data:/app/data
+      - ./data:/app/data
       - .env:/app/.env
     restart: unless-stopped
