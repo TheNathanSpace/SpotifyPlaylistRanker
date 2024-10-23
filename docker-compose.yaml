@@ -4,7 +4,7 @@ services:
   backend:
     image: spotify_ranker
     ports:
-      - ${frontend_port}:${frontend_port}
+      - ${REACT_APP_PORT}:${REACT_APP_PORT}
     volumes:
       - data:/app/data
       - .env:/app/.env

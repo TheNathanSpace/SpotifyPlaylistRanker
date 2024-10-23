@@ -25,7 +25,7 @@ Optional variables:
 
 - `jwt_secret_key` (128-byte key will be generated otherwise)
 - `elo_k_factor` (default of `64` will be used otherwise)
-- `frontend_port` (default of `3000` will be used otherwise)
+- `REACT_APP_PORT` (default of `3000` will be used otherwise)
 
 Example:
 
@@ -35,10 +35,10 @@ spotify_client_id=alphanumeric_string
 spotify_token=alphanumeric_string
 elo_k_factor=64
 backend_port=5000
-frontend_port=3000
+REACT_APP_PORT=3000
 ```
 
-If you change `frontend_port`, be sure to update `docker-compose.yaml` to expose the new port!
+If you change `REACT_APP_PORT`, be sure to update `docker-compose.yaml` to expose the new port!
 
 <details><summary><h3 style="display:inline">Without Docker</h3></summary>
 
@@ -77,9 +77,6 @@ start the front-end with `npm start`.
     * Include option to completely delete a playlist
 * Add user playlist rankings share link to share with friends :)))
 * Proper logging (front- and back-end)
-* Deployment:
-    * Create Dockerfile to build image
-    * `npm start -- --port $frontend_port`
 
 ### Stack
 
