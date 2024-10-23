@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from "prop-types";
 import {GET_PLAYLIST_TRACKS, RESET_PLAYLIST_RANKINGS} from "../util/addresses";
 import RankingsGrid from "./RankingsGrid";
-import {Button} from "@mui/joy";
+import {Alert, Button, Stack} from "@mui/joy";
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 
 const PlaylistRankings = (props) => {
@@ -68,24 +68,45 @@ const PlaylistRankings = (props) => {
     };
 
     return (
-        <div className={"width-80"}>
-            <div className={"full-width"}>
-                <RankingsGrid playlistTracks={playlistTracks}/>
-            </div>
-            <div className={"hor-centered reset-rankings-button-margin"}>
-                <Button
-                    className={"reset-rankings-button"}
-                    color="danger"
-                    variant={!tryReset ? "outlined" : "solid"}
-                    size="lg"
-                    onClick={() => {
-                        resetRankings()
-                    }}
-                >
-                    <WarningAmberOutlinedIcon/>&nbsp;&nbsp;{ !tryReset ? "Reset track rankings" : "CONFIRM?" }&nbsp;&nbsp;<WarningAmberOutlinedIcon/>
-                </Button>
-            </div>
-        </div>
+        <>
+            {
+                errored && !waitingForTracks && <Alert color="danger" variant="outlined"
+                                                    className={"hor-centered ranking-wizard"}><WarningAmberOutlinedIcon/>&nbsp;&nbsp;Error
+                    fetching tracks. Maybe reload?
+                </Alert>
+            }
+            {
+                !errored && waitingForTracks &&
+                <Stack spacing={6} className={"ranking-wizard"}>
+                    <h3 className={"hor-centered ranking-wizard"}>Loading tracks...</h3>
+                    <div className={"hor-centered"}>(Be patient. For large playlists that we haven't cached yet,
+                        this will take a long time as we retrieve the playlist from Spotify.)
+                    </div>
+                </Stack>
+            }
+
+            {
+                !errored && !waitingForTracks &&
+                <div className={"width-80"}>
+                    <div className={"full-width"}><RankingsGrid playlistTracks={playlistTracks}/>
+                        <div className={"hor-centered reset-rankings-button-margin"}>
+                            <Button
+                                className={"reset-rankings-button"}
+                                color="danger"
+                                variant={!tryReset ? "outlined" : "solid"}
+                                size="lg"
+                                onClick={() => {
+                                    resetRankings()
+                                }}
+                            >
+                                <WarningAmberOutlinedIcon/>&nbsp;&nbsp;{!tryReset ? "Reset track rankings" : "CONFIRM?"}&nbsp;&nbsp;
+                                <WarningAmberOutlinedIcon/>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </>
     );
 }
 
