@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const BACKEND_ROOT = "http://127.0.0.1:" + process.env.backend_port;
 const CHECK_PLAYLIST = BACKEND_ROOT + "/check-playlist"
 const LOGIN = BACKEND_ROOT + "/login"
