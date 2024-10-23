@@ -15,6 +15,11 @@ COPY backend/ /app/backend
 
 # Stage 3: Combine both apps in a single container
 FROM python:3.10
+# Install Node.js and npm
+RUN apt-get update && apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
+
 WORKDIR /app
 COPY --from=frontend /app/frontend/ /app/frontend
 COPY --from=backend /app/backend/ /app/backend
