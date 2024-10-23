@@ -55,7 +55,7 @@ class SpotifyProxy:
     def get_user_data(self, user_uri: str):
         cached_user = self.database.get_user(user_uri)
         if not cached_user:
-            print(f"User not cached: {user_uri}")
+            logging.info(f"User not cached: {user_uri}")
             user = self.spotify.user(user=util.to_short_uri(user_uri))
             user_image_bytes = self.get_first_image(user)
             cached_user = User(user_uri, user["display_name"], user_image_bytes)
@@ -66,7 +66,7 @@ class SpotifyProxy:
         cached_playlist = self.database.get_playlist(playlist_uri)
         cached_user = None
         if not cached_playlist:
-            print(f"Playlist not cached: {playlist_uri}")
+            logging.info(f"Playlist not cached: {playlist_uri}")
             playlist = self.spotify.playlist(playlist_id=playlist_uri,
                                              fields="name,description,images,owner.uri,owner.display_name")
             playlist_image_bytes = self.get_first_image(playlist)
@@ -98,7 +98,7 @@ class SpotifyProxy:
             # 5. Set Elo rating for all new tracks
             # 6. Return the current list of tracks
 
-            print(f"Playlist tracks not cached: {playlist_uri}")
+            logging.info(f"Playlist tracks not cached: {playlist_uri}")
             results = self.spotify.playlist_items(playlist_id=playlist_uri,
                                                   fields="href,limit,next,offset,previous,total,items(is_local,track.album.uri,track.album.images,track.album.name,track.artists(uri,name,images),track.name,track.uri,track.preview_url)")
             tracks = results['items']
@@ -128,7 +128,7 @@ class SpotifyProxy:
             album_objects = {}
             artist_objects = {}
 
-            print("Start tracks")
+            logging.info("Start tracks")
             for track in tracks:
                 track_data = track["track"]
                 if track_data["uri"] in track_objects:
@@ -161,9 +161,9 @@ class SpotifyProxy:
                         artist_object = Artist(first_artist["uri"], first_artist["name"],
                                                artist_image_bytes)
                         artist_objects[artist_object.uri] = artist_object
-            print("End tracks")
+            logging.info("End tracks")
 
-            print("Start artists")
+            logging.info("Start artists")
             artist_list = list(artist_objects.keys())
             current_index = 0
             artists_data = []
@@ -177,16 +177,16 @@ class SpotifyProxy:
                 artist_uri = data["uri"]
                 artist_image_bytes = self.get_first_image(data)
                 artist_objects[artist_uri].artist_image = artist_image_bytes
-            print("End artists")
+            logging.info("End artists")
 
-            print("Start DB")
+            logging.info("Start DB")
             self.database.insert_tracks(list(track_objects.values()),
                                         list(album_objects.values()),
                                         list(artist_objects.values()))
             self.database.link_playlist_tracks(playlist_uri, list(track_objects.keys()))
             self.database.set_new_ratings(playlist_uri, username)
             cached_tracks = self.database.get_playlist_tracks(playlist_uri, username)
-            print("End DB")
+            logging.info("End DB")
         return cached_tracks
 
     def get_ranking_options(self, playlist_uri: str, username: str):

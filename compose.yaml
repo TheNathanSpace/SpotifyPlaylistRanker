@@ -1,4 +1,6 @@
 version: '3'
+include:
+  - ../networks.yaml
 
 services:
   spotify_ranker:
@@ -10,3 +12,5 @@ services:
       - ./data:/app/data
       - .env:/app/.env
     restart: unless-stopped
+    networks:
+      - services_network

@@ -10,9 +10,12 @@ tracks.
 2. Create the `.env` configuration file (see below section).
 3. Start the app with `docker compose up`.
 
+`compose.yaml` has some network and permissions stuff that you probably want to remove because I set it up specifically
+for my server. `Dockerfile` also set the permissions to 65536.
+
 ### `.env` Configuration File
 
-Create a `.env` file on the same level as `docker-compose.yaml` and set the required variables. This file will be
+Create a `.env` file on the same level as `compose.yaml` and set the required variables. This file will be
 mounted into the Docker container
 
 Required variables:
@@ -38,7 +41,42 @@ backend_port=5000
 REACT_APP_PORT=3000
 ```
 
-If you change `REACT_APP_PORT`, be sure to update `docker-compose.yaml` to expose the new port!
+If you change `REACT_APP_PORT`, be sure to update `compose.yaml` to expose the new port!
+
+Since API calls are to `/api`, you need to filter those out to the Flask app; for example:
+
+```
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name rank.*;
+
+    include /config/nginx/ssl.conf;
+
+    client_max_body_size 0;
+
+    location /api {
+        include /config/nginx/proxy.conf;
+        include /config/nginx/resolver.conf;
+        set $upstream_app spotify_ranker;
+        set $upstream_port 5000;
+        set $upstream_proto http;
+        proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+
+    }
+
+    location / {
+        include /config/nginx/proxy.conf;
+        include /config/nginx/resolver.conf;
+        set $upstream_app spotify_ranker;
+        set $upstream_port 3000;
+        set $upstream_proto http;
+        proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+
+    }
+}
+```
 
 <details><summary><h3 style="display:inline">Without Docker</h3></summary>
 
@@ -77,6 +115,7 @@ start the front-end with `npm start`.
     * Include option to completely delete a playlist
 * Add user playlist rankings share link to share with friends :)))
 * Proper logging (front- and back-end)
+* Store token to browser
 
 ### Stack
 

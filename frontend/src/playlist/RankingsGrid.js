@@ -11,6 +11,7 @@ const RankingsGrid = (props) => {
     const [colDefs, setColDefs] = useState([]);
     const imageMapFirstRender = useRef(true);
     const playlistTracksFirstRender = useRef(true);
+    const [playlistTracks, setPlaylistTracks] = useState();
 
     const fetchURLImage = async (album_uri, image) => {
         const response = await fetch(image);
@@ -31,15 +32,21 @@ const RankingsGrid = (props) => {
 
     useEffect(() => {
         if (playlistTracksFirstRender.current) {
+            setPlaylistTracks(props.playlistTracks);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (playlistTracksFirstRender.current) {
             playlistTracksFirstRender.current = false // toggle flag after first render/mounting
             return;
         }
 
         (async () => {
-            const imageMap = await base64ToBlobURL(props.playlistTracks);
+            const imageMap = await base64ToBlobURL(playlistTracks);
             setImageMap(imageMap);
         })();
-    }, [props.playlistTracks]);
+    }, [playlistTracks]);
 
     useEffect(() => {
         if (imageMapFirstRender.current) {
@@ -70,7 +77,7 @@ const RankingsGrid = (props) => {
             className="ag-theme-quartz" // applying the grid theme
         >
             <AgGridReact
-                rowData={props.playlistTracks}
+                rowData={playlistTracks}
                 columnDefs={colDefs}
                 domLayout={'autoHeight'}
             />

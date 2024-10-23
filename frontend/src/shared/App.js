@@ -47,6 +47,9 @@ function App() {
                                         </>
                                 }
                             </Route>
+                            <Route path="/version">
+                                0.3
+                            </Route>
                             <Route path="">
                                 <>
                                     <Redirect to={"~/"}/>

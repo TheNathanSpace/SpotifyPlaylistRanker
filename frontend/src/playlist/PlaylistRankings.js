@@ -71,7 +71,7 @@ const PlaylistRankings = (props) => {
         <>
             {
                 errored && !waitingForTracks && <Alert color="danger" variant="outlined"
-                                                    className={"hor-centered ranking-wizard"}><WarningAmberOutlinedIcon/>&nbsp;&nbsp;Error
+                                                       className={"hor-centered ranking-wizard"}><WarningAmberOutlinedIcon/>&nbsp;&nbsp;Error
                     fetching tracks. Maybe reload?
                 </Alert>
             }
@@ -79,8 +79,8 @@ const PlaylistRankings = (props) => {
                 !errored && waitingForTracks &&
                 <Stack spacing={6} className={"ranking-wizard"}>
                     <h3 className={"hor-centered ranking-wizard"}>Loading tracks...</h3>
-                    <div className={"hor-centered"}>(Be patient. For large playlists that we haven't cached yet,
-                        this will take a long time as we retrieve the playlist from Spotify.)
+                    <div className={"hor-centered"}>Be patient. For large playlists that we haven't cached yet,
+                        this will take a long time as we retrieve the playlist from Spotify.
                     </div>
                 </Stack>
             }

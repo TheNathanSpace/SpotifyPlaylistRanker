@@ -81,3 +81,4 @@ data/database.db
 .env
 backend/.cache
 .idea/dataSources.xml
+restart.bash
