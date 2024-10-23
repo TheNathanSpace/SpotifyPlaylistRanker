@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 
 import requests
@@ -22,6 +23,14 @@ class SpotifyProxy:
     def login(self):
         client_id = os.environ["spotify_client_id"]
         token = os.environ["spotify_token"]
+
+        if not client_id:
+            logging.error("Config value spotify_client_id is blank. Set in data/config.env. Exiting.")
+            exit(-1)
+        if not token:
+            logging.error("Config value spotify_client_id is blank. Set in data/config.env. Exiting.")
+            exit(-1)
+
         self.spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id,
                                                                              client_secret=token))
 
