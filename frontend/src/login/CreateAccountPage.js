@@ -24,6 +24,7 @@ const CreateAccountPage = (props) => {
      */
     const usernameValue = useRef("");
     const passwordValue = useRef("");
+    const passwordRepeatValue = useRef("");
 
     const login = async () => {
         setLocation("/")
@@ -37,6 +38,14 @@ const CreateAccountPage = (props) => {
                 password_valid: passwordValue.current,
                 username_error: "Enter username.",
                 password_error: "Enter password."
+            };
+        }
+        else if (passwordValue.current !== passwordRepeatValue.current) {
+            return {
+                username_valid: usernameValue.current,
+                password_valid: false,
+                username_error: "Enter username.",
+                password_error: "Passwords do not match."
             };
         }
 
@@ -105,6 +114,25 @@ const CreateAccountPage = (props) => {
                         size="lg"
                         variant="outlined"
                         onChange={(event) => passwordValue.current = event.target.value}
+                    />
+                    {
+                        (passwordIsValid || !showErrors) ? null : (
+                            <FormHelperText style={{color: theme.palette.error.main}}>
+                                <InfoOutlined/>
+                                {passwordError}
+                            </FormHelperText>
+                        )
+                    }
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Enter Password Again</FormLabel>
+                    <Input
+                        color="neutral"
+                        disabled={false}
+                        placeholder="Password"
+                        size="lg"
+                        variant="outlined"
+                        onChange={(event) => passwordRepeatValue.current = event.target.value}
                     />
                     {
                         (passwordIsValid || !showErrors) ? null : (
