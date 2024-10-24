@@ -103,7 +103,7 @@ const LoginPage = (props) => {
 
     return (
         <div>
-            <h1 className={"inter-font"}>Spotify Playlist Ranker</h1>
+            <h1 className={"inter-font"}>Spotify Playlist Ranker uhhhhhhhhhhh</h1>
             <Stack spacing={3}>
                 <FormControl>
                     <FormLabel>Playlist URL</FormLabel>
