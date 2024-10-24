@@ -115,6 +115,7 @@ start the front-end with `npm start`.
     * Include option to completely delete a playlist
 * Add user playlist rankings share link to share with friends :)))
 * Proper logging (front- and back-end)
+* Store token to browser
 
 ### Stack
 
