@@ -7,7 +7,6 @@ RUN apt-get install -y nodejs
 WORKDIR /app/frontend
 COPY frontend/ /app/frontend
 RUN npm install
-RUN npm run build
 
 # Build the Flask back-end app
 WORKDIR /app/backend
