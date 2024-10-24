@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 
 
 const LoginPage = (props) => {
+    console.log("process.env in following line:")
     console.log(process.env)
 
     const [, setLocation] = useLocation();
