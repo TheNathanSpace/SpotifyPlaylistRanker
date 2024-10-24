@@ -6,7 +6,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 WORKDIR /app/frontend
 COPY frontend/ /app/frontend
-RUN npm install
+RUN npm install -g serve
 
 # Build the Flask back-end app
 WORKDIR /app/backend
