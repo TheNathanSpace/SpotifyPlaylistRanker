@@ -65,12 +65,12 @@ def check_token_and_playlist(args):
     return username, playlist_uri, None
 
 
-@app.route('/version')
+@app.route('/api/version')
 def version():
     return "0.3"
 
 
-@app.route('/validate-account')
+@app.route('/api/validate-account')
 def validate_account():
     username = request.args.get('username')
     password = request.args.get('password')
@@ -86,7 +86,7 @@ def validate_account():
     }
 
 
-@app.route('/create-account')
+@app.route('/api/create-account')
 def create_account():
     username = request.args.get('username')
     password = request.args.get('password')
@@ -113,7 +113,7 @@ def create_account():
     }
 
 
-@app.route('/login')
+@app.route('/api/login')
 def login():
     username = request.args.get('username')
     password = request.args.get('password')
@@ -126,7 +126,7 @@ def login():
     }
 
 
-@app.route('/check-playlist')
+@app.route('/api/check-playlist')
 def checkPlaylist():
     playlist_uri = request.args.get('playlist_uri')
     valid = SPOTIFY.check_playlist(util.to_full_playlist_uri(playlist_uri))
@@ -136,7 +136,7 @@ def checkPlaylist():
     }
 
 
-@app.route('/playlist-data')
+@app.route('/api/playlist-data')
 def playlistData():
     username, playlist_uri, error = check_token_and_playlist(request.args)
     if error:
@@ -146,7 +146,7 @@ def playlistData():
     return response
 
 
-@app.route('/playlist-tracks')
+@app.route('/api/playlist-tracks')
 def playlistTracks():
     username, playlist_uri, error = check_token_and_playlist(request.args)
     if error:
@@ -170,7 +170,7 @@ def playlistTracks():
         }
 
 
-@app.route('/ranking-options')
+@app.route('/api/ranking-options')
 def rankingOptions():
     username, playlist_uri, error = check_token_and_playlist(request.args)
     if error:
@@ -195,7 +195,7 @@ def rankingOptions():
 
 
 # TODO: fix these endpoints to use POST and stuff instead of all GET
-@app.route('/submit-ranking')
+@app.route('/api/submit-ranking')
 def submitRanking():
     username, playlist_uri, error = check_token_and_playlist(request.args)
     if error:
@@ -214,7 +214,7 @@ def submitRanking():
     }
 
 
-@app.route('/reset-rankings')
+@app.route('/api/reset-rankings')
 def resetRankings():
     username, playlist_uri, error = check_token_and_playlist(request.args)
     if error:
