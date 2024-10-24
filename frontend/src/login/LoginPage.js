@@ -9,8 +9,6 @@ import PropTypes from "prop-types";
 
 
 const LoginPage = (props) => {
-    console.log("process.env in following line:")
-    console.log(process.env)
 
     const [, setLocation] = useLocation();
     const theme = useTheme();
@@ -30,6 +28,9 @@ const LoginPage = (props) => {
     const playlistURI = useRef();
 
     const validatePlaylist = async () => {
+        console.log("process.env in following line:")
+        console.log(process.env)
+
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
