@@ -16,4 +16,4 @@ fi
 
 export REACT_APP_BACKEND_PORT="$backend_port"
 
-(cd /app/backend && python app.py) & (cd /app/frontend && REACT_APP_BACKEND_PORT="$backend_port" serve -s build -l "$REACT_APP_PORT") & wait -n
+(cd /app/backend && python app.py) & (cd /app/frontend && REACT_APP_BACKEND_PORT="$backend_port" npm start -- --port "$REACT_APP_PORT") & wait -n
