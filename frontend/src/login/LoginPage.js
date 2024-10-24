@@ -28,6 +28,7 @@ const LoginPage = (props) => {
     const playlistURI = useRef();
 
     const validatePlaylist = async () => {
+        alert(process.env);
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
@@ -65,7 +66,6 @@ const LoginPage = (props) => {
     }, [props.token, playlistIsValid, loginIsValid]);
 
     const validateLogin = async () => {
-        alert(process.env);
         const fieldsFilled = usernameValue.current && passwordValue.current;
 
         if (!fieldsFilled) {
