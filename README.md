@@ -43,6 +43,41 @@ REACT_APP_PORT=3000
 
 If you change `REACT_APP_PORT`, be sure to update `compose.yaml` to expose the new port!
 
+Since API calls are to `/api`, you need to filter those out to the Flask app; for example:
+
+```
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name rank.*;
+
+    include /config/nginx/ssl.conf;
+
+    client_max_body_size 0;
+
+    location /api {
+        include /config/nginx/proxy.conf;
+        include /config/nginx/resolver.conf;
+        set $upstream_app spotify_ranker;
+        set $upstream_port 5000;
+        set $upstream_proto http;
+        proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+
+    }
+
+    location / {
+        include /config/nginx/proxy.conf;
+        include /config/nginx/resolver.conf;
+        set $upstream_app spotify_ranker;
+        set $upstream_port 3000;
+        set $upstream_proto http;
+        proxy_pass $upstream_proto://$upstream_app:$upstream_port;
+
+    }
+}
+```
+
 <details><summary><h3 style="display:inline">Without Docker</h3></summary>
 
 Maybe you're trying to do development or something. Anyway...
