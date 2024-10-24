@@ -6,7 +6,6 @@ services:
   spotify_ranker:
     image: spotify_ranker
     container_name: spotify_ranker
-    user: 65536:65536
     ports:
       - ${REACT_APP_PORT}:${REACT_APP_PORT}
     volumes:
