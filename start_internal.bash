@@ -11,4 +11,4 @@ if [ ! -f ".env" ]; then
   ln -s /app/.env /app/frontend/.env
 fi
 
-(cd /app/backend && python app.py) & (cd /app/frontend && npm start -- --port "$REACT_APP_PORT") & wait -n
+(cd /app/backend && python app.py) & (cd /app/frontend && npm start -- --no-hot --no-live-reload --port "$REACT_APP_PORT") & wait -n

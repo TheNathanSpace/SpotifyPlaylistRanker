@@ -1,4 +1,10 @@
 import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
 import os
 
 from dotenv import load_dotenv
