@@ -9,6 +9,8 @@ import PropTypes from "prop-types";
 
 
 const LoginPage = (props) => {
+    console.log(process.env)
+
     const [, setLocation] = useLocation();
     const theme = useTheme();
 
