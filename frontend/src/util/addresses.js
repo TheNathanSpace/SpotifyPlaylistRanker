@@ -1,4 +1,4 @@
-const BACKEND_ROOT = "http://127.0.0.1:5000/api";
+const BACKEND_ROOT = "/api";
 const CHECK_PLAYLIST = BACKEND_ROOT + "/check-playlist"
 const LOGIN = BACKEND_ROOT + "/login"
 const VALIDATE_ACCOUNT = BACKEND_ROOT + "/validate-account"
