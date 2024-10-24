@@ -53,9 +53,6 @@ const LoginPage = (props) => {
      */
     const isFirstRender = useRef(true);
     useEffect(() => {
-        console.log("process.env in following line:")
-        console.log(process.env)
-
         if (isFirstRender.current) {
             isFirstRender.current = false // toggle flag after first render/mounting
             return;
@@ -68,6 +65,7 @@ const LoginPage = (props) => {
     }, [props.token, playlistIsValid, loginIsValid]);
 
     const validateLogin = async () => {
+        alert(process.env);
         const fieldsFilled = usernameValue.current && passwordValue.current;
 
         if (!fieldsFilled) {
