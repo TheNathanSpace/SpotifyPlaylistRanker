@@ -28,9 +28,6 @@ const LoginPage = (props) => {
     const playlistURI = useRef();
 
     const validatePlaylist = async () => {
-        console.log("process.env in following line:")
-        console.log(process.env)
-
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
@@ -56,6 +53,9 @@ const LoginPage = (props) => {
      */
     const isFirstRender = useRef(true);
     useEffect(() => {
+        console.log("process.env in following line:")
+        console.log(process.env)
+
         if (isFirstRender.current) {
             isFirstRender.current = false // toggle flag after first render/mounting
             return;
