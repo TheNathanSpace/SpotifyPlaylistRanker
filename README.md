@@ -10,9 +10,11 @@ tracks.
 2. Create the `.env` configuration file (see below section).
 3. Start the app with `docker compose up`.
 
+`compose.yaml` has some network stuff that you probably want to remove because I set it up specifically for my server.
+
 ### `.env` Configuration File
 
-Create a `.env` file on the same level as `docker-compose.yaml` and set the required variables. This file will be
+Create a `.env` file on the same level as `compose.yaml` and set the required variables. This file will be
 mounted into the Docker container
 
 Required variables:
@@ -38,7 +40,7 @@ backend_port=5000
 REACT_APP_PORT=3000
 ```
 
-If you change `REACT_APP_PORT`, be sure to update `docker-compose.yaml` to expose the new port!
+If you change `REACT_APP_PORT`, be sure to update `compose.yaml` to expose the new port!
 
 <details><summary><h3 style="display:inline">Without Docker</h3></summary>
 
