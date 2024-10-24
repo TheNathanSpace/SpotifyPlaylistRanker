@@ -16,6 +16,7 @@ RUN pip install -r requirements.txt
 COPY data/ /app/data
 COPY start_internal.bash /app/start_internal.bash
 
-RUN chmod -R 65536 .
+RUN chgrp -R 65536 /app
+RUN chmod -R 774 /app
 
 CMD ["bash", "/app/start_internal.bash"]
