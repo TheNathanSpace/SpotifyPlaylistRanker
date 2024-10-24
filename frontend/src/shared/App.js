@@ -48,7 +48,7 @@ function App() {
                                 }
                             </Route>
                             <Route path="/version">
-                                0.1
+                                0.2
                             </Route>
                             <Route path="">
                                 <>

@@ -65,6 +65,10 @@ def check_token_and_playlist(args):
     return username, playlist_uri, None
 
 
+@app.route('/version')
+def version():
+    return "0.2"
+
 @app.route('/validate-account')
 def validate_account():
     username = request.args.get('username')
