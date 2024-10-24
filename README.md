@@ -10,7 +10,8 @@ tracks.
 2. Create the `.env` configuration file (see below section).
 3. Start the app with `docker compose up`.
 
-`compose.yaml` has some network and permissions stuff that you probably want to remove because I set it up specifically for my server.
+`compose.yaml` has some network and permissions stuff that you probably want to remove because I set it up specifically
+for my server. `Dockerfile` also set the permissions to 65536.
 
 ### `.env` Configuration File
 
