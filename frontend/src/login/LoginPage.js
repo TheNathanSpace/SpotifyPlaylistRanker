@@ -28,7 +28,6 @@ const LoginPage = (props) => {
     const playlistURI = useRef();
 
     const validatePlaylist = async () => {
-        alert(process.env);
         /*
             Playlist format:
             https://open.spotify.com/playlist/0iRTHQNxbBajoLLNpywtD5
@@ -103,7 +102,7 @@ const LoginPage = (props) => {
 
     return (
         <div>
-            <h1 className={"inter-font"}>Spotify Playlist Ranker uhhhhhhhhhhh</h1>
+            <h1 className={"inter-font"}>Spotify Playlist Ranker</h1>
             <Stack spacing={3}>
                 <FormControl>
                     <FormLabel>Playlist URL</FormLabel>
