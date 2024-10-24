@@ -67,7 +67,8 @@ def check_token_and_playlist(args):
 
 @app.route('/version')
 def version():
-    return "0.2"
+    return "0.3"
+
 
 @app.route('/validate-account')
 def validate_account():
@@ -232,4 +233,4 @@ if __name__ == '__main__':
         logging.error("Config value backend_port is blank. Set in .env. Exiting.")
         exit(-1)
 
-    app.run(port=port)
+    app.run(host="0.0.0.0", port=int(port))
